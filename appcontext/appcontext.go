@@ -2,10 +2,11 @@ package appcontext
 
 import (
 	"car-comparison-service/appcontext/database"
+	"car-comparison-service/db/repository"
 )
 
 type AppContext struct {
-	dbClient database.CarComparisonServiceDb
+	dbClient repository.CarComparisonServiceDb
 }
 
 var appContext *AppContext
@@ -17,8 +18,12 @@ func Initiate(module string) error {
 	}
 
 	appContext = &AppContext{
-		dbClient: database.GetDbClient(),
+		dbClient: repository.DbClient(),
 	}
 
 	return nil
+}
+
+func GetDbClient() repository.CarComparisonServiceDb {
+	return repository.DbClient()
 }

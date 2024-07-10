@@ -6,17 +6,10 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
-	"sync"
 	"time"
 )
 
 var gormDb *gorm.DB
-var dbInstance CarComparisonServiceDb
-var dbInstanceDoOnce sync.Once
-
-type CarComparisonServiceDb struct {
-	*gorm.DB
-}
 
 func SetupDatabase() error {
 	dbConf := config.DbConf()
@@ -53,14 +46,4 @@ func SetupDatabase() error {
 
 func GetDB() *gorm.DB {
 	return gormDb
-}
-
-func GetDbClient() CarComparisonServiceDb {
-	dbInstanceDoOnce.Do(func() {
-		dbInstance = CarComparisonServiceDb{
-			DB: GetDB(),
-		}
-	})
-
-	return dbInstance
 }

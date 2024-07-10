@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Hrithik" id="1671646816982">
+        <sql>CREATE TYPE vehicle_type AS ENUM ('CAR','TRUCK')</sql>
+        <createTable tableName="vehicle">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="vehicle_pk"/>
+            </column>
+            <column defaultValueComputed="now()" name="created_on" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="updated_on" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="model" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="brand" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="manufacturing_year" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="vehicle_type">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

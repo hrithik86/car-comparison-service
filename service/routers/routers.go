@@ -11,5 +11,6 @@ func Router() *mux.Router {
 	// Health check
 	router.HandleFunc("/ping", handlers.PingHandler()).Methods("GET")
 
+	vehicleRouter(router)
 	return router
 }
