@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.github.hrithik86</groupId>
+    <artifactId>car-comparison-service</artifactId>
+    <version>1.0</version>
+    <name>Car Comparison service</name>
+    <description>Car Comparison service migrations</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.8.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase.ext</groupId>
+            <artifactId>liquibase-postgresql</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.3.9</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <url>${db.url}</url>
+
+                    <username>${db.username}</username>
+                    <password>${db.password}</password>
+                    <changeLogFile>liquibase-outputChangeLog.xml</changeLogFile>
+                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+                    <outputChangeLogFile>liquibase-outputChangeLog.xml</outputChangeLogFile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>qa</id>
+            <properties>
+                <db.url>jdbc:postgresql://dpg-cq70i588fa8c7381tt60-a.oregon-postgres.render.com:5432/postgresdb_m7qx</db.url>
+                <db.username>hrithik86</db.username>
+                <db.password>vJqS4Whwv9P7T73ct04dnglI8VWhu4py</db.password>
+            </properties>
+        </profile>
+    </profiles>
+</project>

@@ -1,0 +1,15 @@
+port: "3000"
+profile: "production"
+log_level: "debug"
+log_location: "./car_comparison_service.log"
+enable_sql_log: true
+query_timeout: 10000000
+db_host: ""
+db_port: ""
+db_name: ""
+db_user: ""
+db_password: ""
+db_max_idle_conn: 100
+db_conn_max_idle_time: 60000
+db_conn_max_life_time: 60000
+db_max_open_conn: 500
