@@ -16,3 +16,4 @@ db_max_open_conn: 500
 redis_host: ""
 redis_user: ""
 redis_password: ""
+redis_key_expiry_timeout_milliseconds: 86400000

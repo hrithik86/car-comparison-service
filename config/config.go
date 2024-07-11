@@ -25,9 +25,10 @@ type Configuration struct {
 }
 
 type RedisConfig struct {
-	Host     string
-	User     string
-	Password string
+	Host                  string
+	User                  string
+	Password              string
+	RedisKeyExpiryTimeout time.Duration
 }
 
 type DbConfig struct {
@@ -84,9 +85,10 @@ func Load(commandArgs []string) {
 			MaxOpenConn:     getIntOrPanic("db_max_open_conn"),
 		},
 		redisConfig: RedisConfig{
-			Host:     getStringOrPanic("redis_host"),
-			User:     getStringOrPanic("redis_user"),
-			Password: getStringOrPanic("redis_password"),
+			Host:                  getStringOrPanic("redis_host"),
+			User:                  getStringOrPanic("redis_user"),
+			Password:              getStringOrPanic("redis_password"),
+			RedisKeyExpiryTimeout: time.Duration(getIntOrPanic("redis_key_expiry_timeout_milliseconds")) * time.Millisecond,
 		},
 	}
 

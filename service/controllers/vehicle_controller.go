@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	vehicleCache "car-comparison-service/cache_manager/vehicle"
 	"car-comparison-service/db/model"
 	"car-comparison-service/db/repository"
+	"car-comparison-service/logger"
 	"car-comparison-service/ruleEngine/rules/suggestions"
 	"car-comparison-service/service/api/request"
 	"context"
@@ -38,11 +40,21 @@ func (vc *VehicleController) GetVehicleSuggestions(ctx context.Context, id uuid.
 	if err != nil {
 		return nil, err
 	}
-	suggestedVehicles, err := suggestions.ExecuteRules(ctx, vc.db.DB, vehicle)
+
+	vehicleSuggestionCache := vehicleCache.CreateSuggestionVehicle(ctx, vehicle.ID)
+	cachedSuggestions, err := vehicleSuggestionCache.GetVehicleSuggestionsDetails()
 	if err != nil {
-		return nil, err
+		logger.Get(ctx).Errorf("Error in fetching cached suggestions for id: %s, err: %v", id, err.Error())
+		suggestedVehicles, err := suggestions.ExecuteRules(ctx, vc.db.DB, vehicle)
+		if err != nil {
+			return nil, err
+		}
+		if err := vehicleSuggestionCache.SetVehicleSuggestionsDetails(suggestedVehicles); err != nil {
+			logger.Get(ctx).Errorf("Error in caching suggestions for id: %s, err: %v", id, err.Error())
+		}
+		return suggestedVehicles, nil
 	}
-	return suggestedVehicles, nil
+	return cachedSuggestions, nil
 }
 
 func (vc *VehicleController) GetVehicleComparison(ctx context.Context, req request.VehicleComparisonRequest) ([]*model.Vehicle, error) {
