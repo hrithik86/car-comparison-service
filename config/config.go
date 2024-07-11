@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"strconv"
 	"time"
@@ -19,7 +20,14 @@ type Configuration struct {
 	enableSentry bool
 	sentryDsn    string
 	dbConfig     DbConfig
+	redisConfig  RedisConfig
 	queryTimeout int64
+}
+
+type RedisConfig struct {
+	Host     string
+	User     string
+	Password string
 }
 
 type DbConfig struct {
@@ -53,7 +61,7 @@ func Load(commandArgs []string) {
 
 		fmt.Println("In memory config read successfully")
 	} else {
-		// logrus.Fatal("Failed to startup server, please provide a config file name")
+		logrus.Fatal("Failed to startup server, config file name missing")
 	}
 
 	config = &Configuration{
@@ -74,6 +82,11 @@ func Load(commandArgs []string) {
 			ConnMaxIdleTime: getIntOrPanic("db_conn_max_idle_time"),
 			ConnMaxLifeTime: getIntOrPanic("db_conn_max_life_time"),
 			MaxOpenConn:     getIntOrPanic("db_max_open_conn"),
+		},
+		redisConfig: RedisConfig{
+			Host:     getStringOrPanic("redis_host"),
+			User:     getStringOrPanic("redis_user"),
+			Password: getStringOrPanic("redis_password"),
 		},
 	}
 
@@ -133,4 +146,8 @@ func Port() int64 {
 
 func LogLevel() string {
 	return config.logLevel
+}
+
+func RedisConf() RedisConfig {
+	return config.redisConfig
 }
