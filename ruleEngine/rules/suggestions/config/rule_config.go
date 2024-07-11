@@ -4,6 +4,7 @@ import (
 	"car-comparison-service/logger"
 	"car-comparison-service/ruleEngine"
 	"car-comparison-service/ruleEngine/rules/suggestions/filter"
+	"car-comparison-service/ruleEngine/rules/suggestions/priority"
 	"encoding/json"
 	"os"
 	"sort"
@@ -36,7 +37,7 @@ var RuleIdToRuleMap = func() map[string]RuleDetails {
 
 	m["vehicle_type_filter"] = RuleDetails{RuleFunc: filter.VehicleTypeFilter(), Type: FILTER}
 	m["vehicle_brand_filter"] = RuleDetails{RuleFunc: filter.VehicleBrandFilter(), Type: FILTER}
-	// m["price_priority"] = RuleDetails{RuleFunc: priority.PricePriority(), Type: PRIORITY_RULES}
+	m["price_priority"] = RuleDetails{RuleFunc: priority.PricePriority(), Type: PRIORITY_RULES}
 	return m
 }()
 

@@ -26,24 +26,22 @@ func ExecuteRules(ctx context.Context, db *gorm.DB, vehicle *model.Vehicle) ([]m
 	re.SetValue(rules.VehicleTypeVariable, vehicle.Type)
 	re.SetValue(rules.VehicleSuggestions, make([]model.VehicleSuggestionResult, 0, 1))
 
-	err := applyRules(ctx, ruleConfig.FilterRules, re)
+	err := applyFilterRules(ctx, ruleConfig.FilterRules, re)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: Apply priority rules
-	//addRules(ruleConfig.PrioirtyRules, re)
-	//
-	//err = re.Execute(ctx, nil)
-	//if err != nil {
-	//	return nil, err
-	//}
+	applyPriorityRules(ruleConfig.PriorityRules, re)
+	err = re.Execute(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	result, err := ruleEngine.GetCacheValueHelper[[]model.VehicleSuggestionResult](re, rules.VehicleSuggestions)
 	if err != nil {
 		return nil, err
 	}
-	vehicleSuggestionResults := GetValFromPtr(result)
+	vehicleSuggestionResults := ruleEngine.GetValFromPtr(result)
 
 	// Sort in ascending order
 	sort.Slice(vehicleSuggestionResults, func(i, j int) bool {
@@ -52,7 +50,7 @@ func ExecuteRules(ctx context.Context, db *gorm.DB, vehicle *model.Vehicle) ([]m
 	return vehicleSuggestionResults, nil
 }
 
-func applyRules(ctx context.Context, configRules []config.Rule, re *ruleEngine.RuleEngineExecutor) error {
+func applyFilterRules(ctx context.Context, configRules []config.Rule, re *ruleEngine.RuleEngineExecutor) error {
 	for _, rule := range configRules {
 		re.AddRule(InitSelectQuery())
 		if _, ok := config.RuleIdToRuleMap[*rule.RuleId]; ok {
@@ -76,10 +74,10 @@ func applyRules(ctx context.Context, configRules []config.Rule, re *ruleEngine.R
 	return nil
 }
 
-func GetValFromPtr[T any](val *T) T {
-	var ret T
-	if val == nil {
-		return ret
+func applyPriorityRules(rules []config.Rule, re *ruleEngine.RuleEngineExecutor) {
+	for _, rule := range rules {
+		if _, ok := config.RuleIdToRuleMap[*rule.RuleId]; ok {
+			re.AddRule(config.RuleIdToRuleMap[*rule.RuleId].RuleFunc)
+		}
 	}
-	return *val
 }

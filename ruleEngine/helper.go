@@ -70,3 +70,25 @@ func DbExecuteFunc(re *RuleEngineExecutor, result interface{}) error {
 	}
 	return qe.Execute(result)
 }
+
+func GetValFromPtr[T any](val *T) T {
+	var ret T
+	if val == nil {
+		return ret
+	}
+	return *val
+}
+
+func GetUniqueValuesFromArray[T comparable](input []T) []T {
+	seen := make(map[T]bool)
+	uniqueValues := make([]T, 0, 1)
+
+	for _, value := range input {
+		if _, exists := seen[value]; !exists {
+			seen[value] = true
+			uniqueValues = append(uniqueValues, value)
+		}
+	}
+
+	return uniqueValues
+}
