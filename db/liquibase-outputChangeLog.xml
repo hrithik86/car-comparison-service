@@ -28,4 +28,15 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet author="Hrithik" id="1720676714">
+        <sql>ALTER TABLE vehicle DROP COLUMN color</sql>
+        <sql>ALTER TABLE vehicle ADD price BIGINT</sql>
+    </changeSet>
+
+    <changeSet author="Hrithik" id="1720676714">
+        <sql>ALTER TABLE vehicle DROP COLUMN color</sql>
+        <sql>ALTER TABLE vehicle ADD price BIGINT</sql>
+    </changeSet>
+
 </databaseChangeLog>

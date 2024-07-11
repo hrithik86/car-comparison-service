@@ -130,3 +130,7 @@ func QueryTimeout() time.Duration {
 func Port() int64 {
 	return config.port
 }
+
+func LogLevel() string {
+	return config.logLevel
+}

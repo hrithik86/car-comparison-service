@@ -3,7 +3,9 @@ package controllers
 import (
 	"car-comparison-service/db/model"
 	"car-comparison-service/db/repository"
+	"car-comparison-service/ruleEngine/rules/suggestions"
 	"context"
+	"github.com/google/uuid"
 )
 
 type VehicleController struct {
@@ -20,4 +22,24 @@ func (vc *VehicleController) GetVehiclesByModelName(ctx context.Context, modelNa
 		return nil, err
 	}
 	return vehicles, nil
+}
+
+func (vc *VehicleController) GetVehicleById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error) {
+	vehicle, err := vc.db.GetVehiclesById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return vehicle, nil
+}
+
+func (vc *VehicleController) GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]model.VehicleSuggestionResult, error) {
+	vehicle, err := vc.db.GetVehiclesById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	suggestedVehicles, err := suggestions.ExecuteRules(ctx, vc.db.DB, vehicle)
+	if err != nil {
+		return nil, err
+	}
+	return suggestedVehicles, nil
 }

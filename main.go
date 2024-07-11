@@ -3,6 +3,7 @@ package main
 import (
 	"car-comparison-service/appcontext"
 	"car-comparison-service/config"
+	"car-comparison-service/logger"
 	"car-comparison-service/service/api"
 	"fmt"
 	"github.com/urfave/cli/v2"
@@ -13,7 +14,7 @@ func main() {
 	commandArgs := os.Args
 	config.Load(commandArgs)
 
-	//logger.SetupLogger()
+	logger.SetupLogger()
 
 	err := appcontext.Initiate(os.Args[1])
 	if err != nil {

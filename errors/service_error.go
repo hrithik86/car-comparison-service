@@ -20,4 +20,5 @@ var (
 	FAILED_TO_READ_REQUEST_BODY     = NewServiceError("FAILED_TO_READ_REQUEST_BODY", 400)
 	UNKNOWN                         = NewServiceError("UNKNOWN", 500)
 	RESPONSE_SERIALIZATION_ERROR    = NewServiceError("RESPONSE_SERIALIZATION_ERROR", 400)
+	INVALID_UUID                    = NewServiceError("INVALID_UUID", 400)
 )

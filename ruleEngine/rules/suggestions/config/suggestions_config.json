@@ -1,0 +1,17 @@
+[
+  {
+    "ruleId" : "vehicle_type_filter",
+    "isEnabled" : true,
+    "sequenceNumber": 1
+  },
+  {
+    "ruleId" : "vehicle_brand_filter",
+    "isEnabled" : true,
+    "sequenceNumber": 2
+  },
+  {
+    "ruleId" : "price_priority",
+    "isEnabled" : true,
+    "sequenceNumber" : 1
+  }
+]
