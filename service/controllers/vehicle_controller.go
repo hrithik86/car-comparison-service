@@ -4,6 +4,7 @@ import (
 	"car-comparison-service/db/model"
 	"car-comparison-service/db/repository"
 	"car-comparison-service/ruleEngine/rules/suggestions"
+	"car-comparison-service/service/api/request"
 	"context"
 	"github.com/google/uuid"
 )
@@ -42,4 +43,12 @@ func (vc *VehicleController) GetVehicleSuggestions(ctx context.Context, id uuid.
 		return nil, err
 	}
 	return suggestedVehicles, nil
+}
+
+func (vc *VehicleController) GetVehicleComparison(ctx context.Context, req request.VehicleComparisonRequest) ([]*model.Vehicle, error) {
+	vehicles, err := vc.db.GetVehiclesByIds(ctx, req.Ids)
+	if err != nil {
+		return nil, err
+	}
+	return vehicles, nil
 }

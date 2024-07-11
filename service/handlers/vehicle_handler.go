@@ -3,6 +3,7 @@ package handlers
 import (
 	"car-comparison-service/errors"
 	"car-comparison-service/serdes"
+	"car-comparison-service/service/api/request"
 	"car-comparison-service/service/controllers"
 	"context"
 	"github.com/google/uuid"
@@ -51,6 +52,14 @@ func (v *VehicleHandler) GetVehicleSuggestions(ctx context.Context, r serdes.Req
 	}
 
 	response, err := v.vehicleController.GetVehicleSuggestions(ctx, vehicleId)
+	if err != nil {
+		return nil, err
+	}
+	return serdes.NewHttpResponse(http.StatusOK, response), nil
+}
+
+func (v *VehicleHandler) GetVehicleComparison(ctx context.Context, r serdes.Request[request.VehicleComparisonRequest]) (serdes.Response, error) {
+	response, err := v.vehicleController.GetVehicleComparison(ctx, r.Body())
 	if err != nil {
 		return nil, err
 	}
