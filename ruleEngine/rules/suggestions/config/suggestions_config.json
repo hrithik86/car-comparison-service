@@ -13,5 +13,10 @@
     "ruleId" : "price_priority",
     "isEnabled" : true,
     "sequenceNumber" : 1
+  },
+  {
+    "ruleId" : "manufacturing_year_priority",
+    "isEnabled" : true,
+    "sequenceNumber" : 2
   }
 ]

@@ -38,6 +38,7 @@ var RuleIdToRuleMap = func() map[string]RuleDetails {
 	m["vehicle_type_filter"] = RuleDetails{RuleFunc: filter.VehicleTypeFilter(), Type: FILTER}
 	m["vehicle_brand_filter"] = RuleDetails{RuleFunc: filter.VehicleBrandFilter(), Type: FILTER}
 	m["price_priority"] = RuleDetails{RuleFunc: priority.PricePriority(), Type: PRIORITY_RULES}
+	m["manufacturing_year_priority"] = RuleDetails{RuleFunc: priority.ManufacturingYearPriority(), Type: PRIORITY_RULES}
 	return m
 }()
 

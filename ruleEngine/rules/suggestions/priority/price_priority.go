@@ -16,11 +16,11 @@ func pricePriority(ctx context.Context, re *ruleEngine.RuleEngineExecutor) error
 
 	result := ruleEngine.GetValFromPtr(vehicleSuggestionPtr)
 	var priceList []int64
-	priceMap := make(map[int64]int64)
+	priceToRankMap := make(map[int64]int64)
 	for index := range result {
-		if _, ok := priceMap[result[index].Price]; !ok {
+		if _, ok := priceToRankMap[result[index].Price]; !ok {
 			priceList = append(priceList, result[index].Price)
-			priceMap[result[index].Price] = -1
+			priceToRankMap[result[index].Price] = -1
 		}
 	}
 	priceList = ruleEngine.GetUniqueValuesFromArray(priceList)
@@ -32,7 +32,7 @@ func pricePriority(ctx context.Context, re *ruleEngine.RuleEngineExecutor) error
 
 	var currRank int64 = 1
 	for index := range priceList {
-		priceMap[priceList[index]] = currRank
+		priceToRankMap[priceList[index]] = currRank
 		currRank = currRank + 1
 	}
 
@@ -43,7 +43,7 @@ func pricePriority(ctx context.Context, re *ruleEngine.RuleEngineExecutor) error
 
 	for index := range result {
 		priority := int64(99999)
-		if val, ok := priceMap[result[index].Price]; ok {
+		if val, ok := priceToRankMap[result[index].Price]; ok {
 			priority = val
 		}
 		result[index].Rank = result[index].Rank*multiplicationFactor + priority

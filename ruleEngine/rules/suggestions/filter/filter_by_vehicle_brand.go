@@ -23,8 +23,8 @@ func filterByVehicleBrand(ctx context.Context, qe *orm.QueryEngine, re *ruleEngi
 		return nil, err
 	}
 	vehicleSuggestionIds := make([]string, 0)
-	for _, suggestedVehicles := range *result {
-		vehicleSuggestionIds = append(vehicleSuggestionIds, suggestedVehicles.Id.String())
+	for _, suggestedVehicle := range *result {
+		vehicleSuggestionIds = append(vehicleSuggestionIds, suggestedVehicle.Id.String())
 	}
 
 	brandValue, err := ruleEngine.GetCacheValueHelper[*string](re, rules.BrandVariable)

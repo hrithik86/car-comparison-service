@@ -34,9 +34,20 @@
         <sql>ALTER TABLE vehicle ADD price BIGINT</sql>
     </changeSet>
 
-    <changeSet author="Hrithik" id="1720676714">
-        <sql>ALTER TABLE vehicle DROP COLUMN color</sql>
-        <sql>ALTER TABLE vehicle ADD price BIGINT</sql>
+    <changeSet author="Hrithik" id="1720723963">
+        <sql>create type mediatype as enum ('IMAGE', 'VIDEO')</sql>
+        <createTable tableName="vehicle_attachment">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="vehicle_attachment_pk"/>
+            </column>
+            <column defaultValueComputed="now()" name="created_on" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="updated_on" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="name" type="VARCHAR"/>
+            <column name="path" type="VARCHAR"/>
+            <column name="media_type" type="mediatype"/>
+            <column name="vehicle_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_vehicle_id" references="vehicle(id)"/>
+            </column>
+        </createTable>
     </changeSet>
-
 </databaseChangeLog>

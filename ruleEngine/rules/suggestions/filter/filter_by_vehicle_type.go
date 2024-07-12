@@ -23,8 +23,8 @@ func filterByVehicleType(ctx context.Context, qe *orm.QueryEngine, re *ruleEngin
 		return nil, err
 	}
 	vehicleSuggestionIds := make([]string, 0)
-	for _, suggestedVehicles := range *result {
-		vehicleSuggestionIds = append(vehicleSuggestionIds, suggestedVehicles.Id.String())
+	for _, suggestedVehicle := range *result {
+		vehicleSuggestionIds = append(vehicleSuggestionIds, suggestedVehicle.Id.String())
 	}
 
 	typeValue, err := ruleEngine.GetCacheValueHelper[*model.VehicleType](re, rules.VehicleTypeVariable)
