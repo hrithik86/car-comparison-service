@@ -26,6 +26,8 @@ func CreateVehicleSearchResponse(vehicles []*model.VehicleWithAttachmentInformat
 			Model:             vehicle.Model,
 			ManufacturingYear: vehicle.ManufacturingYear,
 			Price:             vehicle.Price,
+			MileageType:       vehicle.Mileage,
+			FuelType:          utils.NewPtr(string(utils.GetValFromPtr(vehicle.FuelType))),
 			Type:              utils.NewPtr(string(utils.GetValFromPtr(vehicle.Type))),
 			Attachments:       nil,
 		}

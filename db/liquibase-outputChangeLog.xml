@@ -102,4 +102,27 @@
                 tableName="vehicle"
         />
     </changeSet>
+
+    <changeSet author="Hrithik" id="1720893092">
+        <createTable tableName="vehicle_features">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="vehicle_features_pk"/>
+            </column>
+            <column defaultValueComputed="now()" name="created_on" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="updated_on" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="key" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hrithik" id="1720896209">
+        <sql>ALTER TABLE vehicle_features ADD COLUMN vehicle_id UUID NOT NULL</sql>
+        <addForeignKeyConstraint baseTableName="vehicle_features" baseColumnNames="vehicle_id"
+                                 constraintName="fk_vehicle_id" referencedTableName="vehicle"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
 </databaseChangeLog>

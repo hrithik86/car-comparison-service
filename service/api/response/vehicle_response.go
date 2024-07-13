@@ -9,6 +9,8 @@ type VehicleResponse struct {
 	ManufacturingYear *int                `json:"manufacturing_year"`
 	Price             *int64              `json:"price"`
 	Type              *string             `json:"type"`
+	FuelType          *string             `json:"fuel_type"`
+	MileageType       *float64            `json:"mileage"`
 	Attachments       []VehicleAttachment `json:"attachments"`
 }
 

@@ -17,8 +17,7 @@ func (db CarComparisonServiceDb) GetVehiclesByModel(ctx context.Context, modelNa
 	var vehicles []*model.VehicleWithAttachmentInformation
 	result := db.WithContext(ctx).
 		Table(model.TableNameVehicle).
-		Select("vehicle.id as id, vehicle.brand as brand, vehicle.model as model, vehicle.manufacturing_year as manufacturing_year, "+
-			"vehicle.type as type, vehicle.price as price, vehicle_attachment.path as path, vehicle_attachment.media_type as media_type, "+
+		Select("vehicle.*, vehicle_attachment.path as path, vehicle_attachment.media_type as media_type, "+
 			"vehicle_attachment.id as attachment_id").
 		Joins("left join vehicle_attachment on vehicle_attachment.vehicle_id = vehicle.id").
 		Where("model like ?", "%"+modelName+"%").
