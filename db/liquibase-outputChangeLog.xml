@@ -50,4 +50,36 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet author="Hrithik" id="1720891976">
+        <addNotNullConstraint
+                columnDataType="BIGINT"
+                columnName="price"
+                constraintName="price_not_null"
+                defaultNullValue="0"
+                tableName="vehicle"
+        />
+        <addNotNullConstraint
+                columnDataType="string"
+                columnName="name"
+                constraintName="name_not_null"
+                defaultNullValue=""
+                tableName="vehicle_attachment"
+        />
+        <addNotNullConstraint
+                columnDataType="string"
+                columnName="path"
+                constraintName="path_not_null"
+                defaultNullValue=""
+                tableName="vehicle_attachment"
+        />
+        <addNotNullConstraint
+                columnDataType="mediatype"
+                columnName="media_type"
+                constraintName="media_type_not_null"
+                defaultNullValue="IMAGE"
+                tableName="vehicle_attachment"
+        />
+    </changeSet>
+
 </databaseChangeLog>
