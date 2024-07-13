@@ -36,3 +36,7 @@ func Eq(column interface{}, value interface{}) clause.Expression {
 func In(column interface{}, values []interface{}) clause.Expression {
 	return clause.IN{Column: column, Values: values}
 }
+
+func Neq(column interface{}, value interface{}) clause.Expression {
+	return clause.Neq{Column: column, Value: value}
+}

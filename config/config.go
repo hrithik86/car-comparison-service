@@ -28,6 +28,8 @@ type RedisConfig struct {
 	Host                  string
 	User                  string
 	Password              string
+	ReadTimeout           time.Duration
+	WriteTimeout          time.Duration
 	RedisKeyExpiryTimeout time.Duration
 }
 
@@ -88,6 +90,8 @@ func Load(commandArgs []string) {
 			Host:                  getStringOrPanic("redis_host"),
 			User:                  getStringOrPanic("redis_user"),
 			Password:              getStringOrPanic("redis_password"),
+			ReadTimeout:           time.Duration(getIntOrPanic("redis_read_connection_timeout_milliseconds")) * time.Millisecond,
+			WriteTimeout:          time.Duration(getIntOrPanic("redis_write_connection_timeout_milliseconds")) * time.Millisecond,
 			RedisKeyExpiryTimeout: time.Duration(getIntOrPanic("redis_key_expiry_timeout_milliseconds")) * time.Millisecond,
 		},
 	}

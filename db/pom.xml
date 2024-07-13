@@ -54,5 +54,13 @@
                 <db.password>vJqS4Whwv9P7T73ct04dnglI8VWhu4py</db.password>
             </properties>
         </profile>
+        <profile>
+            <id>development</id>
+            <properties>
+                <db.url>jdbc:postgresql://localhost:5432/car_comparison_service</db.url>
+                <db.username>postgres</db.username>
+                <db.password>postgres</db.password>
+            </properties>
+        </profile>
     </profiles>
 </project>
