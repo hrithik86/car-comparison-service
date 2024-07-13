@@ -11,5 +11,5 @@ type DbTimeAudit struct {
 }
 
 type DbId struct {
-	ID *uuid.UUID `gorm:"column:id;primaryKey;type:uuid" sql:"default:uuid_generate_v4()" json:"id"`
+	Id *uuid.UUID `gorm:"column:id;primaryKey;type:uuid" sql:"default:uuid_generate_v4()" json:"id"`
 }

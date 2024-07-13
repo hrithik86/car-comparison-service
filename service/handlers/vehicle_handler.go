@@ -5,6 +5,7 @@ import (
 	"car-comparison-service/serdes"
 	"car-comparison-service/service/api/request"
 	"car-comparison-service/service/controllers"
+	"car-comparison-service/service/view"
 	"context"
 	"github.com/google/uuid"
 	"net/http"
@@ -29,7 +30,7 @@ func (v *VehicleHandler) GetVehiclesByModelName(ctx context.Context, r serdes.Re
 	if err != nil {
 		return nil, err
 	}
-	return serdes.NewHttpResponse(http.StatusOK, response), nil
+	return serdes.NewHttpResponse(http.StatusOK, view.CreateVehicleSearchResponse(response)), nil
 }
 
 func (v *VehicleHandler) GetVehicleById(ctx context.Context, r serdes.Request[serdes.NilBody]) (serdes.Response, error) {

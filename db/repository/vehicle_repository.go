@@ -8,15 +8,19 @@ import (
 )
 
 type IVehicle interface {
-	GetVehiclesByModel(ctx context.Context, vehicleName string) ([]*model.Vehicle, error)
+	GetVehiclesByModel(ctx context.Context, vehicleName string) ([]*model.VehicleWithAttachmentInformation, error)
 	GetVehiclesById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error)
 	GetVehiclesByIds(ctx context.Context, ids []uuid.UUID) ([]*model.Vehicle, error)
 }
 
-func (db CarComparisonServiceDb) GetVehiclesByModel(ctx context.Context, modelName string) ([]*model.Vehicle, error) {
-	var vehicles []*model.Vehicle
+func (db CarComparisonServiceDb) GetVehiclesByModel(ctx context.Context, modelName string) ([]*model.VehicleWithAttachmentInformation, error) {
+	var vehicles []*model.VehicleWithAttachmentInformation
 	result := db.WithContext(ctx).
 		Table(model.TableNameVehicle).
+		Select("vehicle.id as id, vehicle.brand as brand, vehicle.model as model, vehicle.manufacturing_year as manufacturing_year, "+
+			"vehicle.type as type, vehicle.price as price, vehicle_attachment.path as path, vehicle_attachment.media_type as media_type, "+
+			"vehicle_attachment.id as attachment_id").
+		Joins("left join vehicle_attachment on vehicle_attachment.vehicle_id = vehicle.id").
 		Where("model like ?", "%"+modelName+"%").
 		Find(&vehicles)
 	err := utils.ValidateResultSuccess(result)

@@ -24,7 +24,7 @@ func ExecuteRules(ctx context.Context, db *gorm.DB, vehicle *model.Vehicle) ([]m
 	re.SetValue(rules.ModelVariable, vehicle.Model)
 	re.SetValue(rules.PriceVariable, vehicle.Price)
 	re.SetValue(rules.VehicleTypeVariable, vehicle.Type)
-	re.SetValue(rules.VehicleId, *vehicle.ID)
+	re.SetValue(rules.VehicleId, *vehicle.Id)
 	re.SetValue(rules.VehicleSuggestions, make([]model.VehicleSuggestionResult, 0, 1))
 
 	err := applyFilterRules(ctx, ruleConfig.FilterRules, re)

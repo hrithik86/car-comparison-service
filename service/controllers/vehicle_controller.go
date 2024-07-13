@@ -19,11 +19,12 @@ func NewVehicleController() *VehicleController {
 	return &VehicleController{db: repository.DbClient()}
 }
 
-func (vc *VehicleController) GetVehiclesByModelName(ctx context.Context, modelName string) ([]*model.Vehicle, error) {
+func (vc *VehicleController) GetVehiclesByModelName(ctx context.Context, modelName string) ([]*model.VehicleWithAttachmentInformation, error) {
 	vehicles, err := vc.db.GetVehiclesByModel(ctx, modelName)
 	if err != nil {
 		return nil, err
 	}
+
 	return vehicles, nil
 }
 
@@ -41,7 +42,7 @@ func (vc *VehicleController) GetVehicleSuggestions(ctx context.Context, id uuid.
 		return nil, err
 	}
 
-	vehicleSuggestionCache := vehicleCache.CreateSuggestionVehicle(ctx, vehicle.ID)
+	vehicleSuggestionCache := vehicleCache.CreateSuggestionVehicle(ctx, vehicle.Id)
 	cachedSuggestions, err := vehicleSuggestionCache.GetVehicleSuggestionsDetails()
 	if err != nil {
 		logger.Get(ctx).Errorf("Error in fetching cached suggestions for id: %s, err: %v", id, err.Error())
