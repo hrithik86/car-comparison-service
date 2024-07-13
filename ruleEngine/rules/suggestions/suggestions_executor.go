@@ -58,7 +58,7 @@ func applyFilterRules(ctx context.Context, configRules []config.Rule, re *ruleEn
 			re.AddRule(config.RuleIdToRuleMap[*rule.RuleId].RuleFunc)
 		}
 		re.SetGetterResult(ruleEngine.DbExecuteFunc)
-		var result []model.VehicleSuggestionResult
+		result := make([]model.VehicleSuggestionResult, 0, 1)
 		err := re.Execute(ctx, &result)
 		if err != nil {
 			if !errors.Is(err, serviceErrors.RECORD_NOT_FOUND) {
@@ -66,11 +66,11 @@ func applyFilterRules(ctx context.Context, configRules []config.Rule, re *ruleEn
 			}
 		}
 		re.SetValue(rules.VehicleSuggestions, result)
+		re.ClearRules()
+		re.ClearQuery()
 		if len(result) < rules.MaxDesiredVehicleSuggestionCount {
 			return nil
 		}
-		re.ClearRules()
-		re.ClearQuery()
 	}
 	return nil
 }

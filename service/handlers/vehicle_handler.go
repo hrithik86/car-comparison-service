@@ -64,5 +64,5 @@ func (v *VehicleHandler) GetVehicleComparison(ctx context.Context, r serdes.Requ
 	if err != nil {
 		return nil, err
 	}
-	return serdes.NewHttpResponse(http.StatusOK, response), nil
+	return serdes.NewHttpResponse(http.StatusOK, view.CreateVehicleComparisonResponse(response)), nil
 }

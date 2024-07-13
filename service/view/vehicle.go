@@ -1,6 +1,7 @@
 package view
 
 import (
+	"car-comparison-service/constants"
 	"car-comparison-service/db/model"
 	"car-comparison-service/service/api/response"
 	"car-comparison-service/utils"
@@ -39,4 +40,13 @@ func CreateVehicleSearchResponse(vehicles []*model.VehicleWithAttachmentInformat
 	}
 
 	return responseList
+}
+
+func CreateVehicleComparisonResponse(values map[string][]interface{}) response.VehicleComparisonResponse {
+	ids := values[constants.VehicleId]
+	delete(values, constants.VehicleId)
+	return response.VehicleComparisonResponse{
+		Ids:             ids,
+		ComparisonTable: values,
+	}
 }

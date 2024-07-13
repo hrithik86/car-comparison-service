@@ -17,3 +17,8 @@ type VehicleAttachment struct {
 	Path      *string    `json:"path"`
 	MediaType *string    `json:"media_type"`
 }
+
+type VehicleComparisonResponse struct {
+	Ids             []interface{}            `json:"ids"`
+	ComparisonTable map[string][]interface{} `json:"comparison_table"`
+}
