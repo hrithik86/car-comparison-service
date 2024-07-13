@@ -19,16 +19,6 @@ func GetCacheValueHelper[T any](re *RuleEngineExecutor, key string) (*T, error) 
 	}
 }
 
-func TypeCastToInterfaceSlice[T any](args []T) []interface{} {
-	var members []interface{}
-
-	for _, arg := range args {
-		members = append(members, arg)
-	}
-
-	return members
-}
-
 func setPtr(val reflect.Value, value interface{}) error {
 	if val.IsNil() {
 		val.Set(reflect.New(val.Type().Elem()))
@@ -69,26 +59,4 @@ func DbExecuteFunc(re *RuleEngineExecutor, result interface{}) error {
 		return err
 	}
 	return qe.Execute(result)
-}
-
-func GetValFromPtr[T any](val *T) T {
-	var ret T
-	if val == nil {
-		return ret
-	}
-	return *val
-}
-
-func GetUniqueValuesFromArray[T comparable](input []T) []T {
-	seen := make(map[T]bool)
-	uniqueValues := make([]T, 0, 1)
-
-	for _, value := range input {
-		if _, exists := seen[value]; !exists {
-			seen[value] = true
-			uniqueValues = append(uniqueValues, value)
-		}
-	}
-
-	return uniqueValues
 }

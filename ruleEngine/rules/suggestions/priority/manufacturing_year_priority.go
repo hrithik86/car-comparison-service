@@ -4,6 +4,7 @@ import (
 	"car-comparison-service/db/model"
 	"car-comparison-service/ruleEngine"
 	"car-comparison-service/ruleEngine/rules"
+	"car-comparison-service/utils"
 	"context"
 	"sort"
 )
@@ -14,7 +15,7 @@ func manufacturingYearPriority(ctx context.Context, re *ruleEngine.RuleEngineExe
 		return err
 	}
 
-	result := ruleEngine.GetValFromPtr(vehicleSuggestionPtr)
+	result := utils.GetValFromPtr(vehicleSuggestionPtr)
 	var manufacturingYearList []int
 	manufacturingYearToRankMap := make(map[int]int64)
 	for index := range result {
@@ -23,7 +24,7 @@ func manufacturingYearPriority(ctx context.Context, re *ruleEngine.RuleEngineExe
 			manufacturingYearToRankMap[result[index].ManufacturingYear] = -1
 		}
 	}
-	manufacturingYearList = ruleEngine.GetUniqueValuesFromArray(manufacturingYearList)
+	manufacturingYearList = utils.GetUniqueValuesFromArray(manufacturingYearList)
 
 	// Sort in descending order
 	sort.Slice(manufacturingYearList, func(i, j int) bool {

@@ -10,6 +10,11 @@
     "sequenceNumber": 2
   },
   {
+    "ruleId" : "vehicle_fuel_type_filter",
+    "isEnabled" : true,
+    "sequenceNumber": 3
+  },
+  {
     "ruleId" : "price_priority",
     "isEnabled" : true,
     "sequenceNumber" : 1

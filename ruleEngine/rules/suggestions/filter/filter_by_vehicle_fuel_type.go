@@ -11,11 +11,11 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func filterByVehicleBrand(ctx context.Context, qe *orm.QueryEngine, re *ruleEngine.RuleEngineExecutor) (*orm.QueryEngine, error) {
+func filterByVehicleFuelType(ctx context.Context, qe *orm.QueryEngine, re *ruleEngine.RuleEngineExecutor) (*orm.QueryEngine, error) {
 	var vehicleTable *clause.Table
 	vehicleTable, err := ruleEngine.GetCacheValueHelper[clause.Table](re, rules.VehicleTable)
 	if err != nil {
-		logger.Log.Error(ctx, err, "Rule Id - filterByVehicleBrand, error fetching VehicleTable")
+		logger.Log.Error(ctx, err, "Rule Id - filterByVehicleFuelType, error fetching VehicleTable")
 		return nil, err
 	}
 
@@ -28,14 +28,14 @@ func filterByVehicleBrand(ctx context.Context, qe *orm.QueryEngine, re *ruleEngi
 		vehicleSuggestionIds = append(vehicleSuggestionIds, suggestedVehicle.Id.String())
 	}
 
-	brandValue, err := ruleEngine.GetCacheValueHelper[*string](re, rules.BrandVariable)
+	fuelTypeValue, err := ruleEngine.GetCacheValueHelper[*model.FuelType](re, rules.VehicleFuelTypeVariable)
 	if err != nil {
-		logger.Log.Error(ctx, err, "Rule Id - filterByVehicleBrand, error fetching brandValue")
+		logger.Log.Error(ctx, err, "Rule Id - filterByVehicleFuelType, error fetching fuelTypeValue")
 		return qe, err
 	}
 
 	qe.Where(
-		orm.Eq(orm.Column(*vehicleTable, "brand"), brandValue),
+		orm.Eq(orm.Column(*vehicleTable, "fuel_type"), *fuelTypeValue),
 	)
 
 	if len(vehicleSuggestionIds) > 0 {
@@ -44,7 +44,7 @@ func filterByVehicleBrand(ctx context.Context, qe *orm.QueryEngine, re *ruleEngi
 	return qe, nil
 }
 
-func VehicleBrandFilter() *ruleEngine.DbRule {
-	return ruleEngine.CreateDbRule("vehicle_brand_filter").
-		AddTask(filterByVehicleBrand)
+func VehicleFuelTypeFilter() *ruleEngine.DbRule {
+	return ruleEngine.CreateDbRule("vehicle_fuel_type_filter").
+		AddTask(filterByVehicleFuelType)
 }

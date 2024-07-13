@@ -6,6 +6,7 @@ import (
 	"car-comparison-service/ruleEngine"
 	"car-comparison-service/ruleEngine/rules"
 	"car-comparison-service/ruleEngine/rules/suggestions/config"
+	"car-comparison-service/utils"
 	"context"
 	"errors"
 	"gorm.io/gorm"
@@ -24,6 +25,7 @@ func ExecuteRules(ctx context.Context, db *gorm.DB, vehicle *model.Vehicle) ([]m
 	re.SetValue(rules.ModelVariable, vehicle.Model)
 	re.SetValue(rules.PriceVariable, vehicle.Price)
 	re.SetValue(rules.VehicleTypeVariable, vehicle.Type)
+	re.SetValue(rules.VehicleFuelTypeVariable, vehicle.FuelType)
 	re.SetValue(rules.VehicleId, *vehicle.Id)
 	re.SetValue(rules.VehicleSuggestions, make([]model.VehicleSuggestionResult, 0, 1))
 
@@ -42,7 +44,7 @@ func ExecuteRules(ctx context.Context, db *gorm.DB, vehicle *model.Vehicle) ([]m
 	if err != nil {
 		return nil, err
 	}
-	vehicleSuggestionResults := ruleEngine.GetValFromPtr(result)
+	vehicleSuggestionResults := utils.GetValFromPtr(result)
 
 	// Sort in ascending order
 	sort.Slice(vehicleSuggestionResults, func(i, j int) bool {

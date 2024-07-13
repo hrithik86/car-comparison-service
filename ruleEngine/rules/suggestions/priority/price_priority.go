@@ -4,6 +4,7 @@ import (
 	"car-comparison-service/db/model"
 	"car-comparison-service/ruleEngine"
 	"car-comparison-service/ruleEngine/rules"
+	"car-comparison-service/utils"
 	"context"
 	"sort"
 )
@@ -14,7 +15,7 @@ func pricePriority(ctx context.Context, re *ruleEngine.RuleEngineExecutor) error
 		return err
 	}
 
-	result := ruleEngine.GetValFromPtr(vehicleSuggestionPtr)
+	result := utils.GetValFromPtr(vehicleSuggestionPtr)
 	var priceList []int64
 	priceToRankMap := make(map[int64]int64)
 	for index := range result {
@@ -23,7 +24,7 @@ func pricePriority(ctx context.Context, re *ruleEngine.RuleEngineExecutor) error
 			priceToRankMap[result[index].Price] = -1
 		}
 	}
-	priceList = ruleEngine.GetUniqueValuesFromArray(priceList)
+	priceList = utils.GetUniqueValuesFromArray(priceList)
 
 	// Sort in ascending order
 	sort.Slice(priceList, func(i, j int) bool {

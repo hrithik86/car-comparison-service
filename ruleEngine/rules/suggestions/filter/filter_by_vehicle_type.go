@@ -6,6 +6,7 @@ import (
 	"car-comparison-service/orm"
 	"car-comparison-service/ruleEngine"
 	"car-comparison-service/ruleEngine/rules"
+	"car-comparison-service/utils"
 	"context"
 	"gorm.io/gorm/clause"
 )
@@ -38,7 +39,7 @@ func filterByVehicleType(ctx context.Context, qe *orm.QueryEngine, re *ruleEngin
 	)
 
 	if len(vehicleSuggestionIds) > 0 {
-		qe.Where(orm.In(orm.Column(*vehicleTable, "id"), ruleEngine.TypeCastToInterfaceSlice(vehicleSuggestionIds)))
+		qe.Where(orm.In(orm.Column(*vehicleTable, "id"), utils.TypeCastToInterfaceSlice(vehicleSuggestionIds)))
 	}
 	return qe, nil
 }

@@ -47,3 +47,26 @@ func ContainsSameValues(slice []interface{}) bool {
 	}
 	return true
 }
+
+func TypeCastToInterfaceSlice[T any](args []T) []interface{} {
+	var members []interface{}
+
+	for _, arg := range args {
+		members = append(members, arg)
+	}
+
+	return members
+}
+func GetUniqueValuesFromArray[T comparable](input []T) []T {
+	seen := make(map[T]bool)
+	uniqueValues := make([]T, 0, 1)
+
+	for _, value := range input {
+		if _, exists := seen[value]; !exists {
+			seen[value] = true
+			uniqueValues = append(uniqueValues, value)
+		}
+	}
+
+	return uniqueValues
+}
