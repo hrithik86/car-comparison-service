@@ -82,4 +82,24 @@
         />
     </changeSet>
 
+    <changeSet author="Hrithik" id="1720893089">
+        <sql>ALTER TABLE vehicle ADD COLUMN mileage FLOAT NOT NULL DEFAULT 0</sql>
+        <sql>ALTER TABLE vehicle ADD CONSTRAINT mileage_positive CHECK (mileage >= 0)</sql>
+        <sql>ALTER TABLE vehicle ADD CONSTRAINT manufacturing_year_positive CHECK (manufacturing_year > 0)</sql>
+        <sql>CREATE TYPE fuel_type AS ENUM ('PETROL','DIESEL','ELECTRIC')</sql>
+    </changeSet>
+
+    <changeSet author="Hrithik" id="1720893090">
+        <sql>ALTER TABLE vehicle ADD COLUMN fuel_type fuel_type</sql>
+    </changeSet>
+
+    <changeSet author="Hrithik" id="1720893091">
+        <addNotNullConstraint
+                columnDataType="fuel_type"
+                columnName="fuel_type"
+                constraintName="fuel_type_not_null"
+                defaultNullValue="PETROL"
+                tableName="vehicle"
+        />
+    </changeSet>
 </databaseChangeLog>
