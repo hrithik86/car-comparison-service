@@ -9,7 +9,7 @@ import (
 
 type IVehicle interface {
 	GetVehiclesByModel(ctx context.Context, vehicleName string) ([]*model.VehicleWithAttachmentInformation, error)
-	GetVehiclesById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error)
+	GetVehicleInfoById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error)
 	GetVehiclesByIds(ctx context.Context, ids []uuid.UUID) ([]*model.Vehicle, error)
 	GetVehicleWithFeaturesById(ctx context.Context, id uuid.UUID) ([]*model.VehicleWithFeatures, error)
 }
@@ -30,7 +30,7 @@ func (db CarComparisonServiceDb) GetVehiclesByModel(ctx context.Context, modelNa
 	return vehicles, nil
 }
 
-func (db CarComparisonServiceDb) GetVehiclesById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error) {
+func (db CarComparisonServiceDb) GetVehicleInfoById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error) {
 	var vehicle *model.Vehicle
 	result := db.WithContext(ctx).
 		Table(model.TableNameVehicle).

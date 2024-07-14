@@ -36,6 +36,21 @@ func (m *MockIVehicle) EXPECT() *MockIVehicleMockRecorder {
 	return m.recorder
 }
 
+// GetVehicleInfoById mocks base method.
+func (m *MockIVehicle) GetVehicleInfoById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetVehicleInfoById", ctx, id)
+	ret0, _ := ret[0].(*model.Vehicle)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetVehicleInfoById indicates an expected call of GetVehicleInfoById.
+func (mr *MockIVehicleMockRecorder) GetVehicleInfoById(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetVehicleInfoById", reflect.TypeOf((*MockIVehicle)(nil).GetVehicleInfoById), ctx, id)
+}
+
 // GetVehicleWithFeaturesById mocks base method.
 func (m *MockIVehicle) GetVehicleWithFeaturesById(ctx context.Context, id uuid.UUID) ([]*model.VehicleWithFeatures, error) {
 	m.ctrl.T.Helper()
@@ -49,21 +64,6 @@ func (m *MockIVehicle) GetVehicleWithFeaturesById(ctx context.Context, id uuid.U
 func (mr *MockIVehicleMockRecorder) GetVehicleWithFeaturesById(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetVehicleWithFeaturesById", reflect.TypeOf((*MockIVehicle)(nil).GetVehicleWithFeaturesById), ctx, id)
-}
-
-// GetVehiclesById mocks base method.
-func (m *MockIVehicle) GetVehiclesById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetVehiclesById", ctx, id)
-	ret0, _ := ret[0].(*model.Vehicle)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetVehiclesById indicates an expected call of GetVehiclesById.
-func (mr *MockIVehicleMockRecorder) GetVehiclesById(ctx, id interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetVehiclesById", reflect.TypeOf((*MockIVehicle)(nil).GetVehiclesById), ctx, id)
 }
 
 // GetVehiclesByIds mocks base method.

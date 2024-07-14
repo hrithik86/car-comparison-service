@@ -57,7 +57,7 @@ func (vc Vehicle) GetVehicleInfoById(ctx context.Context, id uuid.UUID) ([]*mode
 }
 
 func (vc Vehicle) GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]model.VehicleSuggestionResult, error) {
-	vehicle, err := vc.DbClient.GetVehiclesById(ctx, id)
+	vehicle, err := vc.DbClient.GetVehicleInfoById(ctx, id)
 	if err != nil {
 		return nil, err
 	}

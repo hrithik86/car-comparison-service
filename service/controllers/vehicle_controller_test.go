@@ -115,7 +115,7 @@ func (v *VehicleServiceTestSuite) TestVehicle_GetVehiclesByModelName_Failure() {
 
 func (v *VehicleServiceTestSuite) TestVehicle_GetVehicleComparison_Success_WithHideCommonFeatures() {
 	Convey("Given valid ids for comparison", v.T(), func() {
-		Convey("When get vehicle comparison is called with hide common features as true", func() {
+		Convey("When get vehicle comparison is called with hide common features", func() {
 			Convey("Then it should return the data hiding common features", func() {
 
 				vehicleData1 := getVehicleMockData(uuid.New())
@@ -136,7 +136,7 @@ func (v *VehicleServiceTestSuite) TestVehicle_GetVehicleComparison_Success_WithH
 
 func (v *VehicleServiceTestSuite) TestVehicle_GetVehicleComparison_Success_WithoutHideCommonFeatures() {
 	Convey("Given valid ids for comparison", v.T(), func() {
-		Convey("When get vehicle comparison is called without hide common features as true", func() {
+		Convey("When get vehicle comparison is called without hiding common features", func() {
 			Convey("Then it should return the data without hiding common features", func() {
 				vehicleData1 := getVehicleMockData(uuid.New())
 				vehicleData2 := getVehicleMockData(uuid.New())
@@ -149,6 +149,22 @@ func (v *VehicleServiceTestSuite) TestVehicle_GetVehicleComparison_Success_Witho
 				})
 				So(err, ShouldBeNil)
 				assert.Greater(v.T(), len(respMap), 1)
+			})
+		})
+	})
+}
+
+func (v *VehicleServiceTestSuite) TestVehicle_GetVehicleSuggestion_Failure() {
+	Convey("Given invalid id", v.T(), func() {
+		Convey("When get vehicle suggestion is called", func() {
+			Convey("Then it should throw error", func() {
+				vehicleData := getVehicleMockData(uuid.New())
+				var expectedResponse []model.VehicleSuggestionResult
+				v.mockDb.EXPECT().GetVehicleInfoById(gomock.Any(), *vehicleData.Id).Times(1).Return(nil, errors.RECORD_NOT_FOUND)
+				resp, err := v.vehicleClient.GetVehicleSuggestions(context.Background(), *vehicleData.Id)
+				So(err, ShouldNotBeNil)
+				So(err, ShouldEqual, errors.RECORD_NOT_FOUND)
+				So(resp, ShouldResemble, expectedResponse)
 			})
 		})
 	})
