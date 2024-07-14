@@ -32,3 +32,7 @@ func Initiate(module string) error {
 
 	return nil
 }
+
+func GetDbClient() repository.CarComparisonServiceDb {
+	return repository.DbClient()
+}

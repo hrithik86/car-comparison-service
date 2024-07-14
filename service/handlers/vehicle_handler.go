@@ -12,12 +12,12 @@ import (
 )
 
 type VehicleHandler struct {
-	vehicleController *controllers.VehicleController
+	vehicleController controllers.Vehicle
 }
 
 func NewVehicleHandler() *VehicleHandler {
 	return &VehicleHandler{
-		vehicleController: controllers.NewVehicleController(),
+		vehicleController: controllers.InitializeVehicleController(),
 	}
 }
 
@@ -33,13 +33,13 @@ func (v *VehicleHandler) GetVehiclesByModelName(ctx context.Context, r serdes.Re
 	return serdes.NewHttpResponse(http.StatusOK, view.CreateVehicleSearchResponse(response)), nil
 }
 
-func (v *VehicleHandler) GetVehicleById(ctx context.Context, r serdes.Request[serdes.NilBody]) (serdes.Response, error) {
+func (v *VehicleHandler) GetVehicleInfoById(ctx context.Context, r serdes.Request[serdes.NilBody]) (serdes.Response, error) {
 	vehicleId, err := uuid.Parse(r.Param("id"))
 	if err != nil {
 		return nil, errors.INVALID_UUID
 	}
 
-	response, err := v.vehicleController.GetVehicleById(ctx, vehicleId)
+	response, err := v.vehicleController.GetVehicleInfoById(ctx, vehicleId)
 	if err != nil {
 		return nil, err
 	}

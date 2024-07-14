@@ -41,7 +41,7 @@ func vehicleRouter(router *mux.Router) {
 
 	subRouter.Methods(http.MethodGet).Path(getVehicleByIdPath).Handler(
 		middleware.NilRequestResponseMw(
-			vehicleHandler.GetVehicleById,
+			vehicleHandler.GetVehicleInfoById,
 		),
 	)
 }

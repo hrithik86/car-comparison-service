@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"car-comparison-service/appcontext"
 	vehicleCache "car-comparison-service/cache_manager/vehicle"
 	"car-comparison-service/constants"
 	"car-comparison-service/db/model"
@@ -10,18 +11,36 @@ import (
 	"car-comparison-service/utils"
 	"context"
 	"github.com/google/uuid"
+	"sync"
 )
 
-type VehicleController struct {
-	db repository.CarComparisonServiceDb
+type Vehicle struct {
+	DbClient repository.IVehicle
 }
 
-func NewVehicleController() *VehicleController {
-	return &VehicleController{db: repository.DbClient()}
+type IVehicle interface {
+	GetVehiclesByModelName(ctx context.Context, modelName string) ([]*model.VehicleWithAttachmentInformation, error)
+	GetVehicleInfoById(ctx context.Context, id uuid.UUID) ([]*model.VehicleWithFeatures, error)
+	GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]model.VehicleSuggestionResult, error)
+	GetVehicleComparison(ctx context.Context, req request.VehicleComparisonRequest) (map[string][]interface{}, error)
 }
 
-func (vc *VehicleController) GetVehiclesByModelName(ctx context.Context, modelName string) ([]*model.VehicleWithAttachmentInformation, error) {
-	vehicles, err := vc.db.GetVehiclesByModel(ctx, modelName)
+var (
+	VehicleControllerDoOnce sync.Once
+	VehicleController       Vehicle
+)
+
+func InitializeVehicleController() Vehicle {
+	VehicleControllerDoOnce.Do(func() {
+		VehicleController = Vehicle{
+			DbClient: appcontext.GetDbClient(),
+		}
+	})
+	return VehicleController
+}
+
+func (vc Vehicle) GetVehiclesByModelName(ctx context.Context, modelName string) ([]*model.VehicleWithAttachmentInformation, error) {
+	vehicles, err := vc.DbClient.GetVehiclesByModel(ctx, modelName)
 	if err != nil {
 		return nil, err
 	}
@@ -29,16 +48,16 @@ func (vc *VehicleController) GetVehiclesByModelName(ctx context.Context, modelNa
 	return vehicles, nil
 }
 
-func (vc *VehicleController) GetVehicleById(ctx context.Context, id uuid.UUID) ([]*model.VehicleWithFeatures, error) {
-	vehicle, err := vc.db.GetVehicleWithFeaturesById(ctx, id)
+func (vc Vehicle) GetVehicleInfoById(ctx context.Context, id uuid.UUID) ([]*model.VehicleWithFeatures, error) {
+	vehicle, err := vc.DbClient.GetVehicleWithFeaturesById(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	return vehicle, nil
 }
 
-func (vc *VehicleController) GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]model.VehicleSuggestionResult, error) {
-	vehicle, err := vc.db.GetVehiclesById(ctx, id)
+func (vc Vehicle) GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]model.VehicleSuggestionResult, error) {
+	vehicle, err := vc.DbClient.GetVehiclesById(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +69,7 @@ func (vc *VehicleController) GetVehicleSuggestions(ctx context.Context, id uuid.
 
 		suggestionsFactory := SuggestionsFactory{}
 		suggestionsControllerObj := suggestionsFactory.GetSuggestionsController(vehicle.Type)
-		suggestedVehicles, err := suggestionsControllerObj.ExecuteRules(ctx, vc.db.DB, vehicle)
+		suggestedVehicles, err := suggestionsControllerObj.ExecuteRules(ctx, repository.DbClient().DB, vehicle)
 		if err != nil {
 			return nil, err
 		}
@@ -63,8 +82,8 @@ func (vc *VehicleController) GetVehicleSuggestions(ctx context.Context, id uuid.
 	return cachedSuggestions, nil
 }
 
-func (vc *VehicleController) GetVehicleComparison(ctx context.Context, req request.VehicleComparisonRequest) (map[string][]interface{}, error) {
-	vehicles, err := vc.db.GetVehiclesByIds(ctx, req.Ids)
+func (vc Vehicle) GetVehicleComparison(ctx context.Context, req request.VehicleComparisonRequest) (map[string][]interface{}, error) {
+	vehicles, err := vc.DbClient.GetVehiclesByIds(ctx, req.Ids)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +106,7 @@ func (vc *VehicleController) GetVehicleComparison(ctx context.Context, req reque
 	return vehicleFeatureToValuesMap, nil
 }
 
-func (vc *VehicleController) filterCommonFeatures(vehicleFeatureToValuesMap map[string][]interface{}) map[string][]interface{} {
+func (vc Vehicle) filterCommonFeatures(vehicleFeatureToValuesMap map[string][]interface{}) map[string][]interface{} {
 	filteredVehicleFeatureToValuesMap := make(map[string][]interface{})
 	for featureName, values := range vehicleFeatureToValuesMap {
 		if utils.ContainsSameValues(values) {
@@ -98,7 +117,7 @@ func (vc *VehicleController) filterCommonFeatures(vehicleFeatureToValuesMap map[
 	return filteredVehicleFeatureToValuesMap
 }
 
-func (vc *VehicleController) getVehicleKeyFeaturesMap() map[string]bool {
+func (vc Vehicle) getVehicleKeyFeaturesMap() map[string]bool {
 	keyFeaturesMap := make(map[string]bool)
 	keyFeatures := constants.VehicleKeyFeatures
 	for _, feature := range keyFeatures {

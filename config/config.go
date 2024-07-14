@@ -50,6 +50,10 @@ func Load(commandArgs []string) {
 	viper.SetDefault("log_level", "debug")
 	viper.AutomaticEnv()
 
+	viper.AddConfigPath("/")
+	viper.AddConfigPath("./")
+	viper.AddConfigPath("../")
+	viper.AddConfigPath("../../")
 	viper.AddConfigPath("./profiles")
 	viper.SetConfigType("yml")
 
