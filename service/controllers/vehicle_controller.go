@@ -6,7 +6,6 @@ import (
 	"car-comparison-service/db/model"
 	"car-comparison-service/db/repository"
 	"car-comparison-service/logger"
-	"car-comparison-service/ruleEngine/rules/suggestions"
 	"car-comparison-service/service/api/request"
 	"car-comparison-service/utils"
 	"context"
@@ -48,10 +47,14 @@ func (vc *VehicleController) GetVehicleSuggestions(ctx context.Context, id uuid.
 	cachedSuggestions, err := vehicleSuggestionCache.GetVehicleSuggestionsDetails()
 	if err != nil {
 		logger.Get(ctx).Errorf("Error in fetching cached suggestions for id: %s, err: %v", id, err.Error())
-		suggestedVehicles, err := suggestions.ExecuteRules(ctx, vc.db.DB, vehicle)
+
+		suggestionsFactory := SuggestionsFactory{}
+		suggestionsControllerObj := suggestionsFactory.GetSuggestionsController(vehicle.Type)
+		suggestedVehicles, err := suggestionsControllerObj.ExecuteRules(ctx, vc.db.DB, vehicle)
 		if err != nil {
 			return nil, err
 		}
+
 		if err := vehicleSuggestionCache.SetVehicleSuggestionsDetails(suggestedVehicles); err != nil {
 			logger.Get(ctx).Errorf("Error in caching suggestions for id: %s, err: %v", id, err.Error())
 		}
