@@ -43,7 +43,7 @@ func (v *VehicleHandler) GetVehicleById(ctx context.Context, r serdes.Request[se
 	if err != nil {
 		return nil, err
 	}
-	return serdes.NewHttpResponse(http.StatusOK, response), nil
+	return serdes.NewHttpResponse(http.StatusOK, view.CreateVehicleFeaturesResponse(response)), nil
 }
 
 func (v *VehicleHandler) GetVehicleSuggestions(ctx context.Context, r serdes.Request[serdes.NilBody]) (serdes.Response, error) {

@@ -31,15 +31,15 @@ type Vehicle struct {
 }
 
 type VehicleWithAttachmentInformation struct {
-	Id                *uuid.UUID   `gorm:"column:id"`
-	Model             *string      `gorm:"column:model"`
-	Brand             *string      `gorm:"column:brand"`
-	ManufacturingYear *int         `gorm:"column:manufacturing_year"`
-	Type              *VehicleType `gorm:"column:type"`
-	Price             *int64       `gorm:"column:price"`
-	FuelType          *FuelType    `gorm:"column:fuel_type;not null" json:"fuel_type"`
-	Mileage           *float64     `gorm:"column:mileage;not null" json:"mileage"`
-	AttachmentId      *uuid.UUID   `gorm:"column:attachment_id"`
-	Path              *string      `gorm:"column:path"`
-	MediaType         *string      `gorm:"column:media_type"`
+	Vehicle
+	AttachmentId *uuid.UUID `gorm:"column:attachment_id"`
+	Path         *string    `gorm:"column:path"`
+	MediaType    *string    `gorm:"column:media_type"`
+}
+
+type VehicleWithFeatures struct {
+	Vehicle
+	FeatureId *uuid.UUID `gorm:"column:feature_id"`
+	Key       *string    `gorm:"column:key"`
+	Value     *string    `gorm:"column:value"`
 }

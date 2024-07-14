@@ -29,8 +29,8 @@ func (vc *VehicleController) GetVehiclesByModelName(ctx context.Context, modelNa
 	return vehicles, nil
 }
 
-func (vc *VehicleController) GetVehicleById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error) {
-	vehicle, err := vc.db.GetVehiclesById(ctx, id)
+func (vc *VehicleController) GetVehicleById(ctx context.Context, id uuid.UUID) ([]*model.VehicleWithFeatures, error) {
+	vehicle, err := vc.db.GetVehicleWithFeaturesById(ctx, id)
 	if err != nil {
 		return nil, err
 	}
