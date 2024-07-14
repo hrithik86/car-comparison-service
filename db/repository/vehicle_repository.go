@@ -11,7 +11,7 @@ type IVehicle interface {
 	GetVehiclesByModel(ctx context.Context, vehicleName string) ([]*model.VehicleWithAttachmentInformation, error)
 	GetVehiclesById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error)
 	GetVehiclesByIds(ctx context.Context, ids []uuid.UUID) ([]*model.Vehicle, error)
-	GetVehicleWithFeaturesById(ctx context.Context, id uuid.UUID) (*model.VehicleWithFeatures, error)
+	GetVehicleWithFeaturesById(ctx context.Context, id uuid.UUID) ([]*model.VehicleWithFeatures, error)
 }
 
 func (db CarComparisonServiceDb) GetVehiclesByModel(ctx context.Context, modelName string) ([]*model.VehicleWithAttachmentInformation, error) {
