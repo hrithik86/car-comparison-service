@@ -23,7 +23,7 @@ func startServer(router *mux.Router) {
 	handlerFunc := router.ServeHTTP
 	server.UseHandlerFunc(handlerFunc)
 	portInfo := ":" + strconv.Itoa(int(config.Port()))
-	queryTimeoutMiddleware := http.TimeoutHandler(server, config.QueryTimeout(), "Sorry, the request has timed out!")
+	queryTimeoutMiddleware := http.TimeoutHandler(server, config.QueryTimeout(), "request has timed out!")
 
 	httpServer := &http.Server{
 		Addr:    portInfo,

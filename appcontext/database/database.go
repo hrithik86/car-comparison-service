@@ -19,7 +19,7 @@ func SetupDatabase() error {
 
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN:                  connString,
-		PreferSimpleProtocol: true, // disables implicit prepared statement usage,
+		PreferSimpleProtocol: true,
 	}), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,

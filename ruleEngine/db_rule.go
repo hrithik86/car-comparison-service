@@ -7,77 +7,20 @@ import (
 	"fmt"
 )
 
-type ConditionType string
-
-const orCondition ConditionType = "OR"
-const andCondition ConditionType = "AND"
-
 type DbRuleExecuteFunc func(ctx context.Context, qe *orm.QueryEngine, re *RuleEngineExecutor) (*orm.QueryEngine, error)
-
-type Condition struct {
-	conditionFunc RulePreconditionFunc
-	conditionType ConditionType
-}
 
 type DbRule struct {
 	IRule
-	ruleId        string
-	preconditions []Condition
-	preload       RulePreloadFunc
-	tasks         []DbRuleExecuteFunc
+	ruleId string
+	tasks  []DbRuleExecuteFunc
 }
 
 func (rule *DbRule) GetRuleId() string {
 	return rule.ruleId
 }
 
-func (rule *DbRule) Precondition(ctx context.Context, re *RuleEngineExecutor) bool {
-	result := true
-	for i, precondition := range rule.preconditions {
-		if i == 0 {
-			result = precondition.conditionFunc(ctx, re)
-			continue
-		}
-		if precondition.conditionType == orCondition {
-			result = result || precondition.conditionFunc(ctx, re)
-		}
-		if precondition.conditionType == andCondition {
-			result = result && precondition.conditionFunc(ctx, re)
-		}
-	}
-	return result
-}
-
-func (rule *DbRule) AddOrCondition(conditionFunc RulePreconditionFunc) *DbRule {
-	rule.preconditions = append(rule.preconditions, Condition{
-		conditionFunc: conditionFunc,
-		conditionType: orCondition,
-	})
-	return rule
-}
-
-func (rule *DbRule) AddAndCondition(conditionFunc RulePreconditionFunc) *DbRule {
-	rule.preconditions = append(rule.preconditions, Condition{
-		conditionFunc: conditionFunc,
-		conditionType: andCondition,
-	})
-	return rule
-}
-
 func (rule *DbRule) AddTask(task DbRuleExecuteFunc) *DbRule {
 	rule.tasks = append(rule.tasks, task)
-	return rule
-}
-
-func (rule *DbRule) Preload(ctx context.Context, re *RuleEngineExecutor) error {
-	if rule.preload == nil {
-		return nil
-	}
-	return rule.preload(ctx, re)
-}
-
-func (rule *DbRule) SetPreload(preloadFunc RulePreloadFunc) *DbRule {
-	rule.preload = preloadFunc
 	return rule
 }
 

@@ -8,13 +8,8 @@ import (
 
 type ExecuteFunc func(re *RuleEngineExecutor, result interface{}) error
 
-type RulePreconditionFunc func(ctx context.Context, re *RuleEngineExecutor) bool
-type RulePreloadFunc func(ctx context.Context, re *RuleEngineExecutor) error
-
 type IRule interface {
 	GetRuleId() string
-	Precondition(ctx context.Context, executor *RuleEngineExecutor) bool
-	Preload(ctx context.Context, executor *RuleEngineExecutor) error
 	Execute(ctx context.Context, executor *RuleEngineExecutor) error
 }
 
@@ -63,12 +58,6 @@ func (re *RuleEngineExecutor) SetGetterResult(executeFunc ExecuteFunc) {
 
 func (re *RuleEngineExecutor) Execute(ctx context.Context, result interface{}) error {
 	for _, rule := range re.rules {
-		if !rule.Precondition(ctx, re) {
-			continue
-		}
-		if error := rule.Preload(ctx, re); error != nil {
-			return fmt.Errorf("preload failed for %s : %s", rule.GetRuleId(), error.Error())
-		}
 		if error := rule.Execute(ctx, re); error != nil {
 			return fmt.Errorf("execute failed for %s : %s", rule.GetRuleId(), error.Error())
 		}

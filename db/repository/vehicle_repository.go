@@ -50,7 +50,7 @@ func (db CarComparisonServiceDb) GetVehicleWithFeaturesById(ctx context.Context,
 		Select("vehicle.*, vehicle_features.id as feature_id, vehicle_features.key as key, vehicle_features.value as value").
 		Joins("left join vehicle_features on vehicle_features.vehicle_id = vehicle.id").
 		Where("vehicle.id = ?", id).
-		Scan(&vehicle)
+		Find(&vehicle)
 	err := utils.ValidateResultSuccess(result)
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (db CarComparisonServiceDb) GetVehiclesByIds(ctx context.Context, ids []uui
 	result := db.WithContext(ctx).
 		Table(model.TableNameVehicle).
 		Where("id in ?", ids).
-		Scan(&vehicles)
+		Find(&vehicles)
 	err := utils.ValidateResultSuccess(result)
 	if err != nil {
 		return nil, err
