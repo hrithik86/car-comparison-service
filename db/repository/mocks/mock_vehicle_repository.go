@@ -36,6 +36,21 @@ func (m *MockIVehicle) EXPECT() *MockIVehicleMockRecorder {
 	return m.recorder
 }
 
+// CreateVehicle mocks base method.
+func (m *MockIVehicle) CreateVehicle(ctx context.Context, vehicle *model.Vehicle) (*model.Vehicle, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateVehicle", ctx, vehicle)
+	ret0, _ := ret[0].(*model.Vehicle)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateVehicle indicates an expected call of CreateVehicle.
+func (mr *MockIVehicleMockRecorder) CreateVehicle(ctx, vehicle interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateVehicle", reflect.TypeOf((*MockIVehicle)(nil).CreateVehicle), ctx, vehicle)
+}
+
 // GetVehicleInfoById mocks base method.
 func (m *MockIVehicle) GetVehicleInfoById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error) {
 	m.ctrl.T.Helper()

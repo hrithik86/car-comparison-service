@@ -170,6 +170,51 @@ func (v *VehicleServiceTestSuite) TestVehicle_GetVehicleSuggestion_Failure() {
 	})
 }
 
+func (v *VehicleServiceTestSuite) TestVehicle_CreateVehicle_Success() {
+	Convey("Given valid vehicle data", v.T(), func() {
+		Convey("When create vehicle is called", func() {
+			Convey("Then it should create vehicle", func() {
+				vehicleData := getVehicleMockData(uuid.New())
+				v.mockDb.EXPECT().CreateVehicle(gomock.Any(), gomock.Any()).Times(1).Return(vehicleData, nil)
+				resp, err := v.vehicleClient.CreateVehicle(context.Background(), request.CreateVehicleRequest{
+					Model:             vehicleData.Model,
+					Brand:             vehicleData.Brand,
+					ManufacturingYear: vehicleData.ManufacturingYear,
+					Type:              vehicleData.Type,
+					Price:             vehicleData.Price,
+					FuelType:          vehicleData.FuelType,
+					Mileage:           vehicleData.Mileage,
+				})
+				So(err, ShouldBeNil)
+				So(resp, ShouldResemble, vehicleData)
+			})
+		})
+	})
+}
+
+func (v *VehicleServiceTestSuite) TestVehicle_CreateVehicle_Failure() {
+	Convey("Given invalid vehicle data", v.T(), func() {
+		Convey("When create vehicle is called", func() {
+			Convey("Then it should throw error", func() {
+				vehicleData := getVehicleMockData(uuid.New())
+				var vehicle *model.Vehicle
+				v.mockDb.EXPECT().CreateVehicle(gomock.Any(), gomock.Any()).Times(1).Return(nil, errors.UNKNOWN)
+				resp, err := v.vehicleClient.CreateVehicle(context.Background(), request.CreateVehicleRequest{
+					Model:             nil,
+					Brand:             vehicleData.Brand,
+					ManufacturingYear: vehicleData.ManufacturingYear,
+					Type:              vehicleData.Type,
+					Price:             vehicleData.Price,
+					FuelType:          vehicleData.FuelType,
+					Mileage:           vehicleData.Mileage,
+				})
+				So(err, ShouldNotBeNil)
+				So(resp, ShouldResemble, vehicle)
+			})
+		})
+	})
+}
+
 func getVehicleMockData(id uuid.UUID) *model.Vehicle {
 	return &model.Vehicle{
 		DbId: model.DbId{
