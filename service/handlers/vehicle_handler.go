@@ -66,3 +66,11 @@ func (v *VehicleHandler) GetVehicleComparison(ctx context.Context, r serdes.Requ
 	}
 	return serdes.NewHttpResponse(http.StatusOK, view.CreateVehicleComparisonResponse(response)), nil
 }
+
+func (v *VehicleHandler) CreateVehicle(ctx context.Context, r serdes.Request[request.CreateVehicleRequest]) (serdes.Response, error) {
+	response, err := v.vehicleController.CreateVehicle(ctx, r.Body())
+	if err != nil {
+		return nil, err
+	}
+	return serdes.NewHttpResponse(http.StatusOK, response), nil
+}

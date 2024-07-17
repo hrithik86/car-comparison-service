@@ -125,4 +125,10 @@
                                  referencedColumnNames="id"/>
 
     </changeSet>
+    <changeSet author="Hrithik" id="1721193406">
+        <sql>ALTER TABLE vehicle ADD CONSTRAINT price_positive CHECK (price > 0)</sql>
+    </changeSet>
+    <changeSet author="Hrithik" id="1721193407">
+        <sql>ALTER TABLE vehicle ADD CONSTRAINT brand_model_manufacturing_year_unique UNIQUE (brand, model, manufacturing_year)</sql>
+    </changeSet>
 </databaseChangeLog>

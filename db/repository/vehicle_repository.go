@@ -5,6 +5,7 @@ import (
 	"car-comparison-service/db/utils"
 	"context"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type IVehicle interface {
@@ -12,6 +13,7 @@ type IVehicle interface {
 	GetVehicleInfoById(ctx context.Context, id uuid.UUID) (*model.Vehicle, error)
 	GetVehiclesByIds(ctx context.Context, ids []uuid.UUID) ([]*model.Vehicle, error)
 	GetVehicleWithFeaturesById(ctx context.Context, id uuid.UUID) ([]*model.VehicleWithFeatures, error)
+	CreateVehicle(ctx context.Context, vehicle *model.Vehicle) (*model.Vehicle, error)
 }
 
 func (db CarComparisonServiceDb) GetVehiclesByModel(ctx context.Context, modelName string) ([]*model.VehicleWithAttachmentInformation, error) {
@@ -69,4 +71,17 @@ func (db CarComparisonServiceDb) GetVehiclesByIds(ctx context.Context, ids []uui
 		return nil, err
 	}
 	return vehicles, nil
+}
+
+func (db CarComparisonServiceDb) CreateVehicle(ctx context.Context, vehicle *model.Vehicle) (*model.Vehicle, error) {
+	err := db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&vehicle).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, utils.ValidateError(err)
+	}
+	return vehicle, err
 }

@@ -14,6 +14,7 @@ const (
 	vehicleSuggestionsPath = "/{id}/suggestions"
 	searchByModelNamePath  = "/search"
 	compareVehiclesPath    = "/compare"
+	createVehiclePath      = "/create"
 )
 
 func vehicleRouter(router *mux.Router) {
@@ -42,6 +43,12 @@ func vehicleRouter(router *mux.Router) {
 	subRouter.Methods(http.MethodGet).Path(getVehicleByIdPath).Handler(
 		middleware.NilRequestResponseMw(
 			vehicleHandler.GetVehicleInfoById,
+		),
+	)
+
+	subRouter.Methods(http.MethodPost).Path(createVehiclePath).Handler(
+		middleware.RequestResponseMw(
+			vehicleHandler.CreateVehicle,
 		),
 	)
 }

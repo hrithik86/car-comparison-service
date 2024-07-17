@@ -23,6 +23,7 @@ type IVehicle interface {
 	GetVehicleInfoById(ctx context.Context, id uuid.UUID) ([]*model.VehicleWithFeatures, error)
 	GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]model.VehicleSuggestionResult, error)
 	GetVehicleComparison(ctx context.Context, req request.VehicleComparisonRequest) (map[string][]interface{}, error)
+	CreateVehicle(ctx context.Context, req request.CreateVehicleRequest) (*model.Vehicle, error)
 }
 
 var (
@@ -104,6 +105,23 @@ func (vc Vehicle) GetVehicleComparison(ctx context.Context, req request.VehicleC
 	}
 
 	return vehicleFeatureToValuesMap, nil
+}
+
+func (vc Vehicle) CreateVehicle(ctx context.Context, req request.CreateVehicleRequest) (*model.Vehicle, error) {
+	vehicle, err := vc.DbClient.CreateVehicle(ctx, &model.Vehicle{
+		DbId:              model.DbId{Id: utils.NewPtr(uuid.New())},
+		Model:             req.Model,
+		Brand:             req.Brand,
+		ManufacturingYear: req.ManufacturingYear,
+		Type:              req.Type,
+		Price:             req.Price,
+		FuelType:          req.FuelType,
+		Mileage:           req.Mileage,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return vehicle, nil
 }
 
 func (vc Vehicle) filterCommonFeatures(vehicleFeatureToValuesMap map[string][]interface{}) map[string][]interface{} {
