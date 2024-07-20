@@ -74,3 +74,29 @@ func (v *VehicleHandler) CreateVehicle(ctx context.Context, r serdes.Request[req
 	}
 	return serdes.NewHttpResponse(http.StatusOK, response), nil
 }
+
+func (v *VehicleHandler) AddVehicleAttachments(ctx context.Context, r serdes.Request[[]request.BulkAddVehicleAttachmentsRequest]) (serdes.Response, error) {
+	vehicleId, err := uuid.Parse(r.Param("id"))
+	if err != nil {
+		return nil, errors.INVALID_UUID
+	}
+
+	response, err := v.vehicleController.AddVehicleAttachments(ctx, vehicleId, r.Body())
+	if err != nil {
+		return nil, err
+	}
+	return serdes.NewHttpResponse(http.StatusOK, response), nil
+}
+
+func (v *VehicleHandler) AddVehicleFeatures(ctx context.Context, r serdes.Request[[]request.BulkAddVehicleFeaturesRequest]) (serdes.Response, error) {
+	vehicleId, err := uuid.Parse(r.Param("id"))
+	if err != nil {
+		return nil, errors.INVALID_UUID
+	}
+
+	response, err := v.vehicleController.AddVehicleFeatures(ctx, vehicleId, r.Body())
+	if err != nil {
+		return nil, err
+	}
+	return serdes.NewHttpResponse(http.StatusOK, response), nil
+}

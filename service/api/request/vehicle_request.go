@@ -19,3 +19,14 @@ type CreateVehicleRequest struct {
 	FuelType          *model.FuelType    `json:"fuel_type"`
 	Mileage           *float64           `json:"mileage"`
 }
+
+type BulkAddVehicleAttachmentsRequest struct {
+	Name      *string          `json:"name"`
+	Path      *string          `json:"path"`
+	MediaType *model.MediaType `json:"media_type"`
+}
+
+type BulkAddVehicleFeaturesRequest struct {
+	Key   *string `json:"key"`
+	Value *string `json:"value"`
+}

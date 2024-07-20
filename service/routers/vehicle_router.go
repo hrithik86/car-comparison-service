@@ -10,11 +10,13 @@ import (
 const (
 	subRouterVehicleV1Path = "/api/v1/vehicle"
 
-	getVehicleByIdPath     = "/{id}"
-	vehicleSuggestionsPath = "/{id}/suggestions"
-	searchByModelNamePath  = "/search"
-	compareVehiclesPath    = "/compare"
-	createVehiclePath      = "/create"
+	searchByModelNamePath     = "/search"
+	compareVehiclesPath       = "/compare"
+	createVehiclePath         = "/create"
+	getVehicleByIdPath        = "/{id}"
+	vehicleSuggestionsPath    = "/{id}/suggestions"
+	addVehicleAttachmentsPath = "/{id}/add-attachments"
+	addVehicleFeaturesPath    = "/{id}/add-features"
 )
 
 func vehicleRouter(router *mux.Router) {
@@ -49,6 +51,18 @@ func vehicleRouter(router *mux.Router) {
 	subRouter.Methods(http.MethodPost).Path(createVehiclePath).Handler(
 		middleware.RequestResponseMw(
 			vehicleHandler.CreateVehicle,
+		),
+	)
+
+	subRouter.Methods(http.MethodPost).Path(addVehicleAttachmentsPath).Handler(
+		middleware.RequestResponseMw(
+			vehicleHandler.AddVehicleAttachments,
+		),
+	)
+
+	subRouter.Methods(http.MethodPost).Path(addVehicleFeaturesPath).Handler(
+		middleware.RequestResponseMw(
+			vehicleHandler.AddVehicleFeatures,
 		),
 	)
 }

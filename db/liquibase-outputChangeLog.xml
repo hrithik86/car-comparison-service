@@ -134,4 +134,7 @@
     <changeSet author="Hrithik" id="1721193408">
         <sql>ALTER TABLE vehicle_features ADD CONSTRAINT vehicle_id_key_value_unique UNIQUE (vehicle_id, key, value)</sql>
     </changeSet>
+    <changeSet author="Hrithik" id="1721502488">
+        <sql>ALTER TABLE vehicle_attachment ADD CONSTRAINT vehicle_id_path_media_type UNIQUE (vehicle_id, path, media_type)</sql>
+    </changeSet>
 </databaseChangeLog>

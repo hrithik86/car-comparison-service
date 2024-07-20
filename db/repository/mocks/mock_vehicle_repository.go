@@ -36,6 +36,36 @@ func (m *MockIVehicle) EXPECT() *MockIVehicleMockRecorder {
 	return m.recorder
 }
 
+// BulkAddVehicleAttachments mocks base method.
+func (m *MockIVehicle) BulkAddVehicleAttachments(ctx context.Context, vehicleAttachments []*model.VehicleAttachment) ([]*model.VehicleAttachment, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BulkAddVehicleAttachments", ctx, vehicleAttachments)
+	ret0, _ := ret[0].([]*model.VehicleAttachment)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// BulkAddVehicleAttachments indicates an expected call of BulkAddVehicleAttachments.
+func (mr *MockIVehicleMockRecorder) BulkAddVehicleAttachments(ctx, vehicleAttachments interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkAddVehicleAttachments", reflect.TypeOf((*MockIVehicle)(nil).BulkAddVehicleAttachments), ctx, vehicleAttachments)
+}
+
+// BulkAddVehicleFeatures mocks base method.
+func (m *MockIVehicle) BulkAddVehicleFeatures(ctx context.Context, vehicleFeatures []*model.VehicleFeatures) ([]*model.VehicleFeatures, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BulkAddVehicleFeatures", ctx, vehicleFeatures)
+	ret0, _ := ret[0].([]*model.VehicleFeatures)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// BulkAddVehicleFeatures indicates an expected call of BulkAddVehicleFeatures.
+func (mr *MockIVehicleMockRecorder) BulkAddVehicleFeatures(ctx, vehicleFeatures interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkAddVehicleFeatures", reflect.TypeOf((*MockIVehicle)(nil).BulkAddVehicleFeatures), ctx, vehicleFeatures)
+}
+
 // CreateVehicle mocks base method.
 func (m *MockIVehicle) CreateVehicle(ctx context.Context, vehicle *model.Vehicle) (*model.Vehicle, error) {
 	m.ctrl.T.Helper()

@@ -24,6 +24,10 @@ type IVehicle interface {
 	GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]model.VehicleSuggestionResult, error)
 	GetVehicleComparison(ctx context.Context, req request.VehicleComparisonRequest) (map[string][]interface{}, error)
 	CreateVehicle(ctx context.Context, req request.CreateVehicleRequest) (*model.Vehicle, error)
+	AddVehicleAttachments(ctx context.Context, vehicleId uuid.UUID,
+		vehicleAttachmentsRequest []request.BulkAddVehicleAttachmentsRequest) ([]*model.VehicleAttachment, error)
+	AddVehicleFeatures(ctx context.Context, vehicleId uuid.UUID,
+		vehicleFeaturesRequest []request.BulkAddVehicleFeaturesRequest) ([]*model.VehicleFeatures, error)
 }
 
 var (
@@ -142,4 +146,41 @@ func (vc Vehicle) getVehicleKeyFeaturesMap() map[string]bool {
 		keyFeaturesMap[feature] = true
 	}
 	return keyFeaturesMap
+}
+
+func (vc Vehicle) AddVehicleAttachments(ctx context.Context, vehicleId uuid.UUID,
+	vehicleAttachmentsRequest []request.BulkAddVehicleAttachmentsRequest) ([]*model.VehicleAttachment, error) {
+	vehicleAttachments := make([]*model.VehicleAttachment, 0, 1)
+	for _, vehicleAttachmentRequest := range vehicleAttachmentsRequest {
+		vehicleAttachments = append(vehicleAttachments, &model.VehicleAttachment{
+			DbId:      model.DbId{Id: utils.NewPtr(uuid.New())},
+			Name:      vehicleAttachmentRequest.Name,
+			Path:      vehicleAttachmentRequest.Path,
+			MediaType: vehicleAttachmentRequest.MediaType,
+			VehicleId: utils.NewPtr(vehicleId),
+		})
+	}
+	resp, err := vc.DbClient.BulkAddVehicleAttachments(ctx, vehicleAttachments)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (vc Vehicle) AddVehicleFeatures(ctx context.Context, vehicleId uuid.UUID,
+	vehicleFeaturesRequest []request.BulkAddVehicleFeaturesRequest) ([]*model.VehicleFeatures, error) {
+	vehicleFeatures := make([]*model.VehicleFeatures, 0, 1)
+	for _, vehicleFeatureRequest := range vehicleFeaturesRequest {
+		vehicleFeatures = append(vehicleFeatures, &model.VehicleFeatures{
+			DbId:      model.DbId{Id: utils.NewPtr(uuid.New())},
+			Key:       vehicleFeatureRequest.Key,
+			Value:     vehicleFeatureRequest.Value,
+			VehicleId: utils.NewPtr(vehicleId),
+		})
+	}
+	resp, err := vc.DbClient.BulkAddVehicleFeatures(ctx, vehicleFeatures)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }

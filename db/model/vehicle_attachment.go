@@ -15,7 +15,7 @@ type VehicleAttachment struct {
 	DbId
 	Name      *string    `gorm:"column:name" json:"name"`
 	Path      *string    `gorm:"column:path" json:"path"`
-	MediaType *MediaType `gorm:"column:mediatype" json:"mediatype"`
+	MediaType *MediaType `gorm:"column:media_type" json:"media_type"`
 	VehicleId *uuid.UUID `gorm:"column:vehicle_id" json:"vehicle_id"`
 	DbTimeAudit
 }

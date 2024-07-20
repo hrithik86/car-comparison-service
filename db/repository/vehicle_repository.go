@@ -14,6 +14,8 @@ type IVehicle interface {
 	GetVehiclesByIds(ctx context.Context, ids []uuid.UUID) ([]*model.Vehicle, error)
 	GetVehicleWithFeaturesById(ctx context.Context, id uuid.UUID) ([]*model.VehicleWithFeatures, error)
 	CreateVehicle(ctx context.Context, vehicle *model.Vehicle) (*model.Vehicle, error)
+	BulkAddVehicleAttachments(ctx context.Context, vehicleAttachments []*model.VehicleAttachment) ([]*model.VehicleAttachment, error)
+	BulkAddVehicleFeatures(ctx context.Context, vehicleFeatures []*model.VehicleFeatures) ([]*model.VehicleFeatures, error)
 }
 
 func (db CarComparisonServiceDb) GetVehiclesByModel(ctx context.Context, modelName string) ([]*model.VehicleWithAttachmentInformation, error) {
@@ -84,4 +86,30 @@ func (db CarComparisonServiceDb) CreateVehicle(ctx context.Context, vehicle *mod
 		return nil, utils.ValidateError(err)
 	}
 	return vehicle, err
+}
+
+func (db CarComparisonServiceDb) BulkAddVehicleAttachments(ctx context.Context, vehicleAttachments []*model.VehicleAttachment) ([]*model.VehicleAttachment, error) {
+	err := db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&vehicleAttachments).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, utils.ValidateError(err)
+	}
+	return vehicleAttachments, err
+}
+
+func (db CarComparisonServiceDb) BulkAddVehicleFeatures(ctx context.Context, vehicleFeatures []*model.VehicleFeatures) ([]*model.VehicleFeatures, error) {
+	err := db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&vehicleFeatures).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, utils.ValidateError(err)
+	}
+	return vehicleFeatures, err
 }
