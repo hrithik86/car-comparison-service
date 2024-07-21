@@ -215,6 +215,94 @@ func (v *VehicleServiceTestSuite) TestVehicle_CreateVehicle_Failure() {
 	})
 }
 
+func (v *VehicleServiceTestSuite) TestVehicle_AddVehicleAttachments_Success() {
+	Convey("Given valid vehicle attachment data", v.T(), func() {
+		Convey("When add vehicle attachments is called", func() {
+			Convey("Then it should add vehicle attachments", func() {
+				vehicleAttachments := getVehicleAttachmentsMockData()
+				addVehicleAttachmentsRequest := make([]request.BulkAddVehicleAttachmentsRequest, 0, 1)
+				for _, vehicleAttachment := range vehicleAttachments {
+					addVehicleAttachmentsRequest = append(addVehicleAttachmentsRequest, request.BulkAddVehicleAttachmentsRequest{
+						Name:      vehicleAttachment.Name,
+						Path:      vehicleAttachment.Path,
+						MediaType: vehicleAttachment.MediaType,
+					})
+				}
+				v.mockDb.EXPECT().BulkAddVehicleAttachments(gomock.Any(), gomock.Any()).Times(1).Return(vehicleAttachments, nil)
+				resp, err := v.vehicleClient.AddVehicleAttachments(context.Background(), *vehicleAttachments[0].VehicleId, addVehicleAttachmentsRequest)
+				So(err, ShouldBeNil)
+				So(resp, ShouldResemble, vehicleAttachments)
+			})
+		})
+	})
+}
+
+func (v *VehicleServiceTestSuite) TestVehicle_AddVehicleAttachments_Failure() {
+	Convey("Given invalid vehicle attachment data", v.T(), func() {
+		Convey("When add vehicle attachments is called", func() {
+			Convey("Then it should throw error", func() {
+				vehicleAttachments := getVehicleAttachmentsMockData()
+				var expectedResponse []*model.VehicleAttachment
+				addVehicleAttachmentsRequest := make([]request.BulkAddVehicleAttachmentsRequest, 0, 1)
+				for _, vehicleAttachment := range vehicleAttachments {
+					addVehicleAttachmentsRequest = append(addVehicleAttachmentsRequest, request.BulkAddVehicleAttachmentsRequest{
+						Name:      nil,
+						Path:      vehicleAttachment.Path,
+						MediaType: vehicleAttachment.MediaType,
+					})
+				}
+				v.mockDb.EXPECT().BulkAddVehicleAttachments(gomock.Any(), gomock.Any()).Times(1).Return(nil, errors.UNKNOWN)
+				resp, err := v.vehicleClient.AddVehicleAttachments(context.Background(), *vehicleAttachments[0].VehicleId, addVehicleAttachmentsRequest)
+				So(err, ShouldNotBeNil)
+				So(resp, ShouldResemble, expectedResponse)
+			})
+		})
+	})
+}
+
+func (v *VehicleServiceTestSuite) TestVehicle_AddVehicleFeatures_Success() {
+	Convey("Given valid vehicle features data", v.T(), func() {
+		Convey("When add vehicle features is called", func() {
+			Convey("Then it should add vehicle features", func() {
+				vehicleFeatures := getVehicleFeaturesMockData()
+				addVehicleFeaturesRequest := make([]request.BulkAddVehicleFeaturesRequest, 0, 1)
+				for _, vehicleFeature := range vehicleFeatures {
+					addVehicleFeaturesRequest = append(addVehicleFeaturesRequest, request.BulkAddVehicleFeaturesRequest{
+						Key:   vehicleFeature.Key,
+						Value: vehicleFeature.Value,
+					})
+				}
+				v.mockDb.EXPECT().BulkAddVehicleFeatures(gomock.Any(), gomock.Any()).Times(1).Return(vehicleFeatures, nil)
+				resp, err := v.vehicleClient.AddVehicleFeatures(context.Background(), *vehicleFeatures[0].VehicleId, addVehicleFeaturesRequest)
+				So(err, ShouldBeNil)
+				So(resp, ShouldResemble, vehicleFeatures)
+			})
+		})
+	})
+}
+
+func (v *VehicleServiceTestSuite) TestVehicle_AddVehicleFeatures_Failure() {
+	Convey("Given invalid vehicle features data", v.T(), func() {
+		Convey("When add vehicle features is called", func() {
+			Convey("Then it should throw error", func() {
+				vehicleFeatures := getVehicleFeaturesMockData()
+				var expectedResponse []*model.VehicleFeatures
+				addVehicleFeaturesRequest := make([]request.BulkAddVehicleFeaturesRequest, 0, 1)
+				for _, vehicleFeature := range vehicleFeatures {
+					addVehicleFeaturesRequest = append(addVehicleFeaturesRequest, request.BulkAddVehicleFeaturesRequest{
+						Key:   nil,
+						Value: vehicleFeature.Value,
+					})
+				}
+				v.mockDb.EXPECT().BulkAddVehicleFeatures(gomock.Any(), gomock.Any()).Times(1).Return(nil, errors.UNKNOWN)
+				resp, err := v.vehicleClient.AddVehicleFeatures(context.Background(), *vehicleFeatures[0].VehicleId, addVehicleFeaturesRequest)
+				So(err, ShouldNotBeNil)
+				So(resp, ShouldResemble, expectedResponse)
+			})
+		})
+	})
+}
+
 func getVehicleMockData(id uuid.UUID) *model.Vehicle {
 	return &model.Vehicle{
 		DbId: model.DbId{
@@ -227,5 +315,30 @@ func getVehicleMockData(id uuid.UUID) *model.Vehicle {
 		Price:             utils.NewPtr(int64(4000000)),
 		FuelType:          utils.NewPtr(model.PETROL),
 		Mileage:           utils.NewPtr(12.4),
+	}
+}
+
+func getVehicleAttachmentsMockData() []*model.VehicleAttachment {
+	return []*model.VehicleAttachment{{
+		DbId: model.DbId{
+			Id: utils.NewPtr(uuid.New()),
+		},
+		Name:      utils.NewPtr("Img-1"),
+		Path:      utils.NewPtr("s3://images/Img-1.jpg"),
+		MediaType: utils.NewPtr(model.IMAGE),
+		VehicleId: utils.NewPtr(uuid.New()),
+	},
+	}
+}
+
+func getVehicleFeaturesMockData() []*model.VehicleFeatures {
+	return []*model.VehicleFeatures{{
+		DbId: model.DbId{
+			Id: utils.NewPtr(uuid.New()),
+		},
+		Key:       utils.NewPtr("Power Steering"),
+		Value:     utils.NewPtr("true"),
+		VehicleId: utils.NewPtr(uuid.New()),
+	},
 	}
 }
