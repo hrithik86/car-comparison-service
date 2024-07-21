@@ -4,6 +4,7 @@ import (
 	"car-comparison-service/appcontext"
 	vehicleCache "car-comparison-service/cache_manager/vehicle"
 	"car-comparison-service/constants"
+	"car-comparison-service/contexts"
 	"car-comparison-service/db/model"
 	"car-comparison-service/db/repository"
 	"car-comparison-service/logger"
@@ -79,12 +80,18 @@ func (vc Vehicle) GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]mo
 			return nil, err
 		}
 
-		if err := vehicleSuggestionCache.SetVehicleSuggestionsDetails(suggestedVehicles); err != nil {
-			logger.Get(ctx).Errorf("Error in caching suggestions for id: %s, err: %v", id, err.Error())
-		}
+		newCtx := contexts.Copy(ctx)
+		go vc.cacheSuggestedVehicles(newCtx, vehicle.Id, suggestedVehicles)
 		return suggestedVehicles, nil
 	}
 	return cachedSuggestions, nil
+}
+
+func (vc Vehicle) cacheSuggestedVehicles(ctx context.Context, vehicleId *uuid.UUID, suggestedVehicles []model.VehicleSuggestionResult) {
+	vehicleSuggestionCache := vehicleCache.CreateSuggestionVehicle(ctx, vehicleId)
+	if err := vehicleSuggestionCache.SetVehicleSuggestionsDetails(suggestedVehicles); err != nil {
+		logger.Get(ctx).Errorf("Error in caching suggestions for id: %s, err: %v", vehicleId.String(), err.Error())
+	}
 }
 
 func (vc Vehicle) GetVehicleComparison(ctx context.Context, req request.VehicleComparisonRequest) (map[string][]interface{}, error) {
