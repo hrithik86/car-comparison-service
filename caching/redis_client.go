@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+type IRedisClient interface {
+	Get(ctx context.Context, key string) (string, error)
+	SetWithExpiry(ctx context.Context, key string, val interface{}, expiry time.Duration) error
+}
+
 type RedisClient struct {
 	RedisClient *redis.Client
 }

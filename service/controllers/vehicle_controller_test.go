@@ -1,13 +1,15 @@
 package controllers
 
 import (
+	cacheManagerMocks "car-comparison-service/cache_manager/vehicle/mocks"
 	"car-comparison-service/db/model"
-	"car-comparison-service/db/repository/mocks"
+	repoMocks "car-comparison-service/db/repository/mocks"
 	"car-comparison-service/errors"
 	"car-comparison-service/service/api/request"
 	"car-comparison-service/tests"
 	"car-comparison-service/utils"
 	"context"
+	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	. "github.com/smartystreets/goconvey/convey"
@@ -22,17 +24,20 @@ func TestVehicleControllerTestSuite(t *testing.T) {
 
 type VehicleServiceTestSuite struct {
 	suite.Suite
-	mockDb        *mocks.MockIVehicle
-	vehicleClient Vehicle
+	mockDb                 *repoMocks.MockIVehicle
+	mockVehicleSuggestions *cacheManagerMocks.MockIVehicleSuggestions
+	vehicleClient          Vehicle
 }
 
 func (v *VehicleServiceTestSuite) SetupTest() {
 	tests.SetupFixtures()
 	ctrl := gomock.NewController(v.T())
 	defer ctrl.Finish()
-	v.mockDb = mocks.NewMockIVehicle(ctrl)
+	v.mockDb = repoMocks.NewMockIVehicle(ctrl)
+	v.mockVehicleSuggestions = cacheManagerMocks.NewMockIVehicleSuggestions(ctrl)
 	v.vehicleClient = Vehicle{
-		DbClient: v.mockDb,
+		DbClient:           v.mockDb,
+		VehicleSuggestions: v.mockVehicleSuggestions,
 	}
 }
 
@@ -303,6 +308,25 @@ func (v *VehicleServiceTestSuite) TestVehicle_AddVehicleFeatures_Failure() {
 	})
 }
 
+func (v *VehicleServiceTestSuite) TestVehicle_GetVehicleSuggestion_CachedResultSuccess() {
+	Convey("Given valid vehicle id", v.T(), func() {
+		Convey("When get vehicle suggestion is called", func() {
+			Convey("Then it should returned cached result", func() {
+				vehicleId := uuid.New()
+				key := fmt.Sprintf("{suggestions-set}_%s", vehicleId.String())
+				vehicleInfo := getVehicleMockData(vehicleId)
+				suggestionsData := getVehicleSuggestionsMockData()
+				v.mockVehicleSuggestions.EXPECT().CreateKey(gomock.Any(), gomock.Any()).Times(1).Return(key)
+				v.mockVehicleSuggestions.EXPECT().GetVehicleSuggestionsDetails(gomock.Any(), key).Times(1).Return(suggestionsData, nil)
+				v.mockDb.EXPECT().GetVehicleInfoById(gomock.Any(), gomock.Any()).Times(1).Return(vehicleInfo, nil)
+				resp, err := v.vehicleClient.GetVehicleSuggestions(context.Background(), uuid.New())
+				So(err, ShouldBeNil)
+				So(resp, ShouldResemble, suggestionsData)
+			})
+		})
+	})
+}
+
 func getVehicleMockData(id uuid.UUID) *model.Vehicle {
 	return &model.Vehicle{
 		DbId: model.DbId{
@@ -340,5 +364,32 @@ func getVehicleFeaturesMockData() []*model.VehicleFeatures {
 		Value:     utils.NewPtr("true"),
 		VehicleId: utils.NewPtr(uuid.New()),
 	},
+	}
+}
+
+func getVehicleSuggestionsMockData() []model.VehicleSuggestionResult {
+	return []model.VehicleSuggestionResult{
+		{
+			Id:                uuid.New(),
+			Model:             "i10",
+			Brand:             "Hyundai",
+			ManufacturingYear: 2022,
+			Price:             1000000,
+			Mileage:           20.2,
+			FuelType:          string(model.DIESEL),
+			Type:              string(model.CAR),
+			Rank:              1,
+		},
+		{
+			Id:                uuid.New(),
+			Model:             "Grand-i10",
+			Brand:             "Hyundai",
+			ManufacturingYear: 2023,
+			Price:             1500000,
+			Mileage:           20.2,
+			FuelType:          string(model.DIESEL),
+			Type:              string(model.CAR),
+			Rank:              2,
+		},
 	}
 }

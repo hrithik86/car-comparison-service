@@ -16,7 +16,8 @@ import (
 )
 
 type Vehicle struct {
-	DbClient repository.IVehicle
+	DbClient           repository.IVehicle
+	VehicleSuggestions vehicleCache.IVehicleSuggestions
 }
 
 type IVehicle interface {
@@ -39,7 +40,8 @@ var (
 func InitializeVehicleController() Vehicle {
 	VehicleControllerDoOnce.Do(func() {
 		VehicleController = Vehicle{
-			DbClient: appcontext.GetDbClient(),
+			DbClient:           appcontext.GetDbClient(),
+			VehicleSuggestions: vehicleCache.NewVehicleSuggestionsManager(),
 		}
 	})
 	return VehicleController
@@ -68,8 +70,8 @@ func (vc Vehicle) GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]mo
 		return nil, err
 	}
 
-	vehicleSuggestionCache := vehicleCache.CreateSuggestionVehicle(ctx, vehicle.Id)
-	cachedSuggestions, err := vehicleSuggestionCache.GetVehicleSuggestionsDetails()
+	key := vc.VehicleSuggestions.CreateKey(ctx, id.String())
+	cachedSuggestions, err := vc.VehicleSuggestions.GetVehicleSuggestionsDetails(ctx, key)
 	if err != nil {
 		logger.Get(ctx).Errorf("Error in fetching cached suggestions for id: %s, err: %v", id, err.Error())
 
@@ -81,16 +83,15 @@ func (vc Vehicle) GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]mo
 		}
 
 		newCtx := contexts.Copy(ctx)
-		go vc.cacheSuggestedVehicles(newCtx, vehicle.Id, suggestedVehicles)
+		go vc.cacheSuggestedVehicles(newCtx, key, suggestedVehicles)
 		return suggestedVehicles, nil
 	}
 	return cachedSuggestions, nil
 }
 
-func (vc Vehicle) cacheSuggestedVehicles(ctx context.Context, vehicleId *uuid.UUID, suggestedVehicles []model.VehicleSuggestionResult) {
-	vehicleSuggestionCache := vehicleCache.CreateSuggestionVehicle(ctx, vehicleId)
-	if err := vehicleSuggestionCache.SetVehicleSuggestionsDetails(suggestedVehicles); err != nil {
-		logger.Get(ctx).Errorf("Error in caching suggestions for id: %s, err: %v", vehicleId.String(), err.Error())
+func (vc Vehicle) cacheSuggestedVehicles(ctx context.Context, key string, suggestedVehicles []model.VehicleSuggestionResult) {
+	if err := vc.VehicleSuggestions.SetVehicleSuggestionsDetails(ctx, key, suggestedVehicles); err != nil {
+		logger.Get(ctx).Errorf("Error in caching suggestions for key: %s, err: %v", key, err.Error())
 	}
 }
 

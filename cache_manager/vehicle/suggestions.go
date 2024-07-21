@@ -7,42 +7,42 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 )
 
-const suggestedKeySuffix = "suggestions_set"
+const suggestedKeySuffix = "{suggestions_set}"
 
-type Vehicle struct {
-	ctx       context.Context
-	vehicleId *uuid.UUID
+type IVehicleSuggestions interface {
+	CreateKey(ctx context.Context, vehicleId string) string
+	SetVehicleSuggestionsDetails(ctx context.Context, key string, res []model.VehicleSuggestionResult) error
+	GetVehicleSuggestionsDetails(ctx context.Context, key string) ([]model.VehicleSuggestionResult, error)
 }
 
-func (v *Vehicle) createKey() string {
-	return fmt.Sprintf("%s-%s", v.vehicleId, suggestedKeySuffix)
+func NewVehicleSuggestionsManager() IVehicleSuggestions {
+	return &Suggestions{}
 }
 
-func (v *Vehicle) SetVehicleSuggestionsDetails(res []model.VehicleSuggestionResult) error {
+type Suggestions struct {
+}
+
+func (v *Suggestions) CreateKey(ctx context.Context, vehicleId string) string {
+	return fmt.Sprintf("%s_%s", suggestedKeySuffix, vehicleId)
+}
+
+func (v *Suggestions) SetVehicleSuggestionsDetails(ctx context.Context, key string, res []model.VehicleSuggestionResult) error {
 	data, err := json.Marshal(res)
 	if err != nil {
 		return err
 	}
-	err = caching.GetRedisClient().SetWithExpiry(v.ctx, v.createKey(), string(data), config.RedisConf().RedisKeyExpiryTimeout)
+	err = caching.GetRedisClient().SetWithExpiry(ctx, key, string(data), config.RedisConf().RedisKeyExpiryTimeout)
 	return err
 }
 
-func (v *Vehicle) GetVehicleSuggestionsDetails() ([]model.VehicleSuggestionResult, error) {
-	res, err := caching.GetRedisClient().Get(v.ctx, v.createKey())
+func (v *Suggestions) GetVehicleSuggestionsDetails(ctx context.Context, key string) ([]model.VehicleSuggestionResult, error) {
+	res, err := caching.GetRedisClient().Get(ctx, key)
 	if err != nil {
 		return nil, err
 	}
 	var result []model.VehicleSuggestionResult
 	err = json.Unmarshal([]byte(res), &result)
 	return result, err
-}
-
-func CreateSuggestionVehicle(ctx context.Context, vehicleId *uuid.UUID) *Vehicle {
-	return &Vehicle{
-		ctx:       ctx,
-		vehicleId: vehicleId,
-	}
 }
