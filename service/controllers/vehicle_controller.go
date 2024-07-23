@@ -9,6 +9,7 @@ import (
 	"car-comparison-service/db/repository"
 	"car-comparison-service/logger"
 	"car-comparison-service/service/api/request"
+	"car-comparison-service/service/controllers/suggestions"
 	"car-comparison-service/utils"
 	"context"
 	"github.com/google/uuid"
@@ -75,7 +76,7 @@ func (vc Vehicle) GetVehicleSuggestions(ctx context.Context, id uuid.UUID) ([]mo
 	if err != nil {
 		logger.Get(ctx).Errorf("Error in fetching cached suggestions for id: %s, err: %v", id, err.Error())
 
-		suggestionsFactory := SuggestionsFactory{}
+		suggestionsFactory := suggestions.SuggestionsFactory{}
 		suggestionsControllerObj := suggestionsFactory.GetSuggestionsController(vehicle.Type)
 		suggestedVehicles, err := suggestionsControllerObj.ExecuteRules(ctx, repository.DbClient().DB, vehicle)
 		if err != nil {

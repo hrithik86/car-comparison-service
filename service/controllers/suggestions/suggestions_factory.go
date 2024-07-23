@@ -1,6 +1,8 @@
-package controllers
+package suggestions
 
-import "car-comparison-service/db/model"
+import (
+	"car-comparison-service/db/model"
+)
 
 type SuggestionsFactory struct{}
 

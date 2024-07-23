@@ -1,4 +1,4 @@
-package controllers
+package suggestions
 
 import (
 	"car-comparison-service/db/model"
